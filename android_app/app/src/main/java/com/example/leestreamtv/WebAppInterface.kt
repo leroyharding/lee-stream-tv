@@ -162,7 +162,18 @@ class WebAppInterface(private val mContext: Context) {
                 }
             }
 
-            mContext.registerReceiver(onComplete, android.content.IntentFilter(android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                mContext.registerReceiver(
+                    onComplete,
+                    android.content.IntentFilter(android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+                    Context.RECEIVER_EXPORTED
+                )
+            } else {
+                mContext.registerReceiver(
+                    onComplete,
+                    android.content.IntentFilter(android.app.DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                )
+            }
         } catch (e: Exception) {
             activity?.runOnUiThread {
                 Toast.makeText(mContext, "Failed to start download: ${e.message}", Toast.LENGTH_LONG).show()
