@@ -1,6 +1,6 @@
 {
-  "versionCode": 2,
-  "versionName": "1.2.0",
-  "changelog": "Added remote-friendly in-app update installer, background downloader, and package installation handler.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.2.0/LeeStreamTV_v1.2.0.apk"
+  "versionCode": 3,
+  "versionName": "1.3.0",
+  "changelog": "TV optimized grid layouts with smaller movie posters (aspect-ratio based, fits 6 posters per row).",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.3.0/LeeStreamTV_v1.3.0.apk"
 }
