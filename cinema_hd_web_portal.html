@@ -1542,13 +1542,36 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.4.0</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.0</span>
+                            <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
                     </div>
 
                     <!-- Cinema Main Screen Content -->
                     <div class="cinema-content">
+                        <!-- Web Preview mode banner (only shown in standard web browsers) -->
+                        <div id="web-preview-banner" style="display: none; background: linear-gradient(90deg, rgba(255, 122, 0, 0.15), rgba(0, 0, 0, 0.4)); border: 1px solid rgba(255, 122, 0, 0.3); padding: 14px 20px; border-radius: 14px; margin-bottom: 25px; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 4px 20px rgba(255, 122, 0, 0.05); flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 12px; min-width: 250px; flex: 1;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 122, 0, 0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(255, 122, 0, 0.3);">
+                                    <i data-lucide="globe" style="width: 18px; height: 18px; color: var(--accent-cinema);"></i>
+                                </div>
+                                <div style="text-align: left;">
+                                    <h4 style="margin: 0; font-size: 0.9rem; color: #fff; font-weight: 700; font-family: var(--font-display);">LeeStreamTV Web Preview</h4>
+                                    <p style="margin: 2px 0 0; font-size: 0.78rem; color: var(--text-muted); line-height: 1.3;">You are running in a standard web browser. Get the native Android App for Firestick or Android TV.</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <button class="btn-primary-action" onclick="downloadLatestAPK()" style="height: auto; padding: 8px 18px; border-radius: 10px; font-size: 0.8rem; font-weight: 700; background: var(--accent-cinema); border: none; color: #000; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+                                    <i data-lucide="download" style="width: 14px; height: 14px; stroke-width: 2.5;"></i>
+                                    <span>Download APK</span>
+                                </button>
+                                <button onclick="dismissWebPreviewBanner()" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 50%; transition: background-color 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#fff'" onmouseout="this.style.background='transparent'; this.style.color='var(--text-muted)'">
+                                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="search-container" style="margin-bottom: 30px;">
                             <input type="text" class="input-accented" placeholder="Search movies, TV shows, debrid files..." id="cinema-search-input" onkeyup="handleCinemaSearch(event)">
                             <button class="btn-search-action" onclick="searchCinema()">
@@ -1729,7 +1752,7 @@
                                         <span style="font-size: 0.8rem; color: var(--text-muted);">Automatically pick the best 4K source on resolve</span>
                                     </div>
                                     <label class="switch">
-                                        <input type="checkbox" id="autoselect-toggle">
+                                        <input type="checkbox" id="autoselect-toggle" onchange="localStorage.setItem('autoselect_4k_enabled', this.checked)">
                                         <span class="slider"></span>
                                     </label>
                                 </div>
@@ -1766,9 +1789,35 @@
                                         <span style="font-size: 0.8rem; color: var(--text-muted);">Only display links compatible with standard browser audio (AAC/MP3)</span>
                                     </div>
                                     <label class="switch">
-                                        <input type="checkbox" id="websound-toggle" onchange="renderResolvedLinks()">
+                                        <input type="checkbox" id="websound-toggle" onchange="localStorage.setItem('websound_only_enabled', this.checked); renderResolvedLinks()">
                                         <span class="slider"></span>
                                     </label>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.04);">
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span style="font-weight: 600; color: #fff; font-size: 0.95rem;">Show Scraper Logs</span>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);">Display real-time diagnostic logs during link finding</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="scraper-logs-toggle" onchange="localStorage.setItem('show_scraper_logs_enabled', this.checked)">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <!-- App Info & Download Section (Visible only in Web Preview) -->
+                                <div id="settings-web-download-card" style="display: none; flex-direction: column; gap: 12px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 20px;">
+                                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">LeeStreamTV App</h3>
+                                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span style="font-weight: 600; color: #fff; font-size: 0.95rem;">Download Android App (APK)</span>
+                                            <span style="font-size: 0.8rem; color: var(--text-muted);">Install the native app on your Firestick or Android TV for hardware-accelerated playback and debrid integration.</span>
+                                        </div>
+                                        <button class="btn-primary-action" onclick="downloadLatestAPK()" style="height: auto; padding: 10px 20px; border-radius: 10px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                            <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                                            <span>Download APK</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1811,7 +1860,7 @@
                                 <div class="details-actions">
                                     <button class="btn-primary-action" onclick="openScraperOverlay()">
                                         <i data-lucide="play" style="width: 20px; height: 20px; fill: currentColor;"></i>
-                                        <span>Resolve Stream Links</span>
+                                        <span>Find Stream Links</span>
                                     </button>
                                     <button class="btn-secondary-action" id="watchlist-action-btn" onclick="toggleWatchlist()">
                                         <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
@@ -2692,7 +2741,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 4; // Increment this with every release
+        const CURRENT_VERSION_CODE = 5; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -2700,6 +2749,9 @@
                 const res = await fetch('https://raw.githubusercontent.com/leroyharding/lee-stream-tv/main/update.json');
                 if (!res.ok) return;
                 const updateInfo = await res.json();
+                
+                // Store the latest APK url globally for download buttons
+                window.latestApkUrl = updateInfo.apkUrl;
 
                 if (updateInfo.versionCode > CURRENT_VERSION_CODE) {
                     document.getElementById('update-version-label').innerText = `Version ${updateInfo.versionName} is ready`;
@@ -2747,9 +2799,40 @@
             }, 100);
         }
 
+        function dismissWebPreviewBanner() {
+            const banner = document.getElementById('web-preview-banner');
+            if (banner) {
+                banner.style.display = 'none';
+            }
+            localStorage.setItem('dismissed_web_preview_banner', 'true');
+        }
+
+        function downloadLatestAPK() {
+            const url = window.latestApkUrl || "https://github.com/leroyharding/lee-stream-tv/releases/latest";
+            window.open(url, '_blank');
+        }
+
         // Initialize Lucide Icons & Catalog
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            
+            // Check if running on web preview (no native bridge)
+            if (!hasNativeBridge()) {
+                const previewBadge = document.getElementById('sidebar-preview-badge');
+                if (previewBadge) {
+                    previewBadge.style.display = 'inline-block';
+                }
+                const settingsCard = document.getElementById('settings-web-download-card');
+                if (settingsCard) {
+                    settingsCard.style.display = 'flex';
+                }
+                if (localStorage.getItem('dismissed_web_preview_banner') !== 'true') {
+                    const previewBanner = document.getElementById('web-preview-banner');
+                    if (previewBanner) {
+                        previewBanner.style.display = 'flex';
+                    }
+                }
+            }
             
             // Check if user has active Real-Debrid token on page load
             const rdToken = localStorage.getItem('rd_access_token');
@@ -2762,6 +2845,18 @@
             // Restore Auto-Play HdHub toggle state
             const autoplayHdHub = localStorage.getItem('autoplay_hdhub_enabled') === 'true';
             document.getElementById('autoplay-hdhub-toggle').checked = autoplayHdHub;
+
+            // Restore Scraper Logs toggle state
+            const showScraperLogs = localStorage.getItem('show_scraper_logs_enabled') === 'true';
+            document.getElementById('scraper-logs-toggle').checked = showScraperLogs;
+
+            // Restore Auto-Select 4K toggle state
+            const autoselectEnabled = localStorage.getItem('autoselect_4k_enabled') === 'true';
+            document.getElementById('autoselect-toggle').checked = autoselectEnabled;
+
+            // Restore Web Sound Only toggle state
+            const websoundOnly = localStorage.getItem('websound_only_enabled') === 'true';
+            document.getElementById('websound-toggle').checked = websoundOnly;
 
             // Restore Preferred Player dropdown state
             const savedPlayer = localStorage.getItem('leestreamtv_preferred_player') || localStorage.getItem('leeprime_preferred_player');
@@ -3598,6 +3693,10 @@
             // Reset logs and links view
             const logger = document.getElementById('terminal-logger');
             logger.innerHTML = '';
+            
+            // Apply show/hide terminal logs setting
+            const showScraperLogs = localStorage.getItem('show_scraper_logs_enabled') !== 'false';
+            logger.style.display = showScraperLogs ? 'flex' : 'none';
             
             const linksShelf = document.getElementById('links-shelf');
             linksShelf.innerHTML = '';

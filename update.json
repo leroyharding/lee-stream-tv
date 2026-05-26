@@ -1,6 +1,6 @@
 {
-  "versionCode": 4,
-  "versionName": "1.4.0",
-  "changelog": "Added Streaming Catalogs sidebar filter (Netflix, HBO Max, Disney+, Prime Video, Apple TV+).",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.4.0/LeeStreamTV_v1.4.0.apk"
+  "versionCode": 5,
+  "versionName": "1.5.0",
+  "changelog": "Added Web Preview Mode banner, badge, and settings card for browser mode; added Show Scraper Logs option in Settings; renamed play button to Find Stream Links.",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.0/LeeStreamTV_v1.5.0.apk"
 }
