@@ -1542,7 +1542,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.0</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.1</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -2741,7 +2741,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 5; // Increment this with every release
+        const CURRENT_VERSION_CODE = 6; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3695,7 +3695,7 @@
             logger.innerHTML = '';
             
             // Apply show/hide terminal logs setting
-            const showScraperLogs = localStorage.getItem('show_scraper_logs_enabled') !== 'false';
+            const showScraperLogs = localStorage.getItem('show_scraper_logs_enabled') === 'true';
             logger.style.display = showScraperLogs ? 'flex' : 'none';
             
             const linksShelf = document.getElementById('links-shelf');
