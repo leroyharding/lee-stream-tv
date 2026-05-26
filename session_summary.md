@@ -6,6 +6,10 @@ This file contains a detailed record of the changes, achievements, and structura
 
 ## 1. Project Achievements & Features Completed
 
+### Scraping Terminal Logs Default-Off Fix (v1.5.1)
+- **Settings Sync & Default OFF**: Resolved a bug where the link-scraping terminal logs panel (`#terminal-logger`) was still showing in the native APK version. This was caused by the storage check in `openScraperOverlay()` checking for `!== 'false'`, which returned `true` (ON) when the value was `null` (not set). Changed it to `=== 'true'` so it remains hidden (OFF) by default.
+- **Synchronized Web Portal & Assets**: Ensured the fixes were applied consistently to both the web portal HTML file and the native Android asset build.
+
 ### In-App Update System (GitHub Hosted)
 - **Automatic Version Checks**: On startup, the web portal fetches the remote version config from `https://raw.githubusercontent.com/leroyharding/lee-stream-tv/main/update.json`.
 - **High-Tech Remote-Friendly Modal**: If a newer `versionCode` is found on GitHub, the app displays a custom cyber-themed modal showcasing the version number, changelog, and a focusable "Update Now" button.
@@ -34,20 +38,15 @@ This file contains a detailed record of the changes, achievements, and structura
 ## 2. Codebase Modifications (Committed & Pushed to GitHub)
 
 1. **[cinema_hd_web_portal.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/cinema_hd_web_portal.html)**:
-   - Added update modal overlay structure, styles, and fetch logic.
-   - Restyled the movie grid catalog columns, aspect ratio, text, and paddings.
-   - Added Streaming Catalogs sidebar items, styles, `selectProvider(id)` handlers, and updated TMDB endpoints.
+   - Fixed scraper logs overlay check from `!== 'false'` to `=== 'true'` (line 3698).
+   - Bumped `CURRENT_VERSION_CODE = 6` (line 2744).
+   - Updated display text to `LeeStreamTV v1.5.1` (line 1545).
 2. **[android_app/app/src/main/assets/index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/assets/index.html)**:
-   - Kept fully synchronized with `cinema_hd_web_portal.html`.
-3. **[android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt)**:
-   - Implemented `downloadAndInstallAPK` background downloads and package install triggers.
-   - Patched broadcast receiver registration with `Context.RECEIVER_EXPORTED` flags for SDK 33+ compatibility.
-4. **[android_app/app/src/main/AndroidManifest.xml](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/AndroidManifest.xml)**:
-   - Added permissions for `REQUEST_INSTALL_PACKAGES` and `WRITE_EXTERNAL_STORAGE`.
-5. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
-   - Incremented version configurations up to `versionCode = 5` and `versionName = "1.5.0"`.
-6. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
-   - Configured with `versionCode: 5`, pointing to the `v1.5.0` release.
+   - Kept fully synchronized with `cinema_hd_web_portal.html` scraper log fix and version settings.
+3. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
+   - Incremented version configurations to `versionCode = 6` and `versionName = "1.5.1"`.
+4. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
+   - Configured with `versionCode: 6`, `versionName: "1.5.1"`, and updated release changelog.
 
 ---
 
@@ -58,11 +57,11 @@ The following APKs are built and ready to use in your local workspace folder:
 - **`LeeStreamTV_v1.3.0.apk`**: Update build containing 6-column movie grid layout (versionCode = 3).
 - **`LeeStreamTV_v1.4.0.apk`**: Update build containing Streaming Catalogs sidebar section (versionCode = 4).
 - **`LeeStreamTV_v1.5.0.apk`**: Update build containing Web Preview Mode, Find Stream Links button renaming, defaults off checkboxes, and scraper logs settings toggle (versionCode = 5).
+- **`LeeStreamTV_v1.5.1.apk`**: Bugfix build resolving default scraper logs panel visibility (versionCode = 6).
 
 ---
 
 ## 4. Current Status & Next Steps
 - **GitHub Code Repository**: All source modifications are committed and pushed to the main branch of `https://github.com/leroyharding/lee-stream-tv.git`.
-- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.5.0`.
-- **Downloader/Installation Server**: Terminated after successful tests.
-- **Next Step**: When you start a new session, you can run a local server again if you need to load new APKs, or draft release `v1.5.0` on GitHub and upload `LeeStreamTV_v1.5.0.apk` to test the in-app update trigger.
+- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.5.1`.
+- **Next Step**: Draft release `v1.5.1` on GitHub and upload `LeeStreamTV_v1.5.1.apk` to test the in-app update trigger.
