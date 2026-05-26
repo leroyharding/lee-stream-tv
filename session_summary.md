@@ -45,9 +45,9 @@ This file contains a detailed record of the changes, achievements, and structura
 4. **[android_app/app/src/main/AndroidManifest.xml](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/AndroidManifest.xml)**:
    - Added permissions for `REQUEST_INSTALL_PACKAGES` and `WRITE_EXTERNAL_STORAGE`.
 5. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
-   - Incremented version configurations up to `versionCode = 4` and `versionName = "1.4.0"`.
+   - Incremented version configurations up to `versionCode = 5` and `versionName = "1.5.0"`.
 6. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
-   - Configured with `versionCode: 4`, pointing to the `v1.4.0` release.
+   - Configured with `versionCode: 5`, pointing to the `v1.5.0` release.
 
 ---
 
@@ -57,11 +57,12 @@ The following APKs are built and ready to use in your local workspace folder:
 - **`LeeStreamTV_v1.2.0.apk`**: Update build containing initial version fix (versionCode = 2).
 - **`LeeStreamTV_v1.3.0.apk`**: Update build containing 6-column movie grid layout (versionCode = 3).
 - **`LeeStreamTV_v1.4.0.apk`**: Update build containing Streaming Catalogs sidebar section (versionCode = 4).
+- **`LeeStreamTV_v1.5.0.apk`**: Update build containing Web Preview Mode, Find Stream Links button renaming, defaults off checkboxes, and scraper logs settings toggle (versionCode = 5).
 
 ---
 
 ## 4. Current Status & Next Steps
 - **GitHub Code Repository**: All source modifications are committed and pushed to the main branch of `https://github.com/leroyharding/lee-stream-tv.git`.
-- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.4.0`.
+- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.5.0`.
 - **Downloader/Installation Server**: Terminated after successful tests.
-- **Next Step**: When you start a new session, you can run a local server again if you need to load new APKs, or draft release `v1.4.0` on GitHub and upload `LeeStreamTV_v1.4.0.apk` to test the in-app update trigger.
+- **Next Step**: When you start a new session, you can run a local server again if you need to load new APKs, or draft release `v1.5.0` on GitHub and upload `LeeStreamTV_v1.5.0.apk` to test the in-app update trigger.
