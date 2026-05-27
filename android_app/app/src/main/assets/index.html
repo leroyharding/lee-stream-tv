@@ -1521,7 +1521,10 @@
                                 <i data-lucide="clapperboard" style="width: 18px; height: 18px;"></i>
                                 <span>TV Shows</span>
                             </li>
-
+                            <li class="menu-item" id="nav-collections" onclick="switchTab('collections')">
+                                <i data-lucide="library" style="width: 18px; height: 18px;"></i>
+                                <span>Collections</span>
+                            </li>
                             <li class="menu-item" id="nav-watchlist" onclick="switchTab('watchlist')">
                                 <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
                                 <span>Watchlist</span>
@@ -1574,7 +1577,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.5</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.6</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -1978,6 +1981,14 @@
                         <div class="details-extra-section" id="detail-similar-section" style="margin-top: 25px; display: none;">
                             <h3 class="cinema-shelf-title" style="margin-bottom: 15px; font-size: 1.15rem; color: #fff;">You May Also Like</h3>
                             <div class="horizontal-scroll-row" id="detail-similar-row">
+                                <!-- Filled dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Collections Shelf -->
+                        <div class="details-extra-section" id="detail-collection-section" style="margin-top: 25px; display: none;">
+                            <h3 class="cinema-shelf-title" style="margin-bottom: 15px; font-size: 1.15rem; color: #fff;">Included Movies</h3>
+                            <div class="horizontal-scroll-row" id="detail-collection-row">
                                 <!-- Filled dynamically -->
                             </div>
                         </div>
@@ -2827,7 +2838,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 10; // Increment this with every release
+        const CURRENT_VERSION_CODE = 11; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3007,7 +3018,7 @@
                 if (shelfTitleHeader) shelfTitleHeader.style.display = 'flex';
                 if (searchContainer) searchContainer.style.display = 'flex';
                 
-                if (tab === 'watchlist') {
+                if (tab === 'watchlist' || tab === 'collections') {
                     if (categoryRow) categoryRow.style.display = 'none';
                     if (genreShelf) genreShelf.style.display = 'none';
                 } else {
@@ -3102,6 +3113,8 @@
             
             if (activeTab === 'watchlist') {
                 shelfTitle.innerText = "My Synced Watchlist";
+            } else if (activeTab === 'collections') {
+                shelfTitle.innerText = "Premium Stremio Collections";
             } else {
                 let providerName = '';
                 if (activeProvider === 8) providerName = 'Netflix ';
@@ -3606,6 +3619,87 @@
                 if (filterQuery) {
                     items = items.filter(item => item.title.toLowerCase().includes(filterQuery.toLowerCase()));
                 }
+            } else if (activeTab === 'collections') {
+                try {
+                    const res = await fetch('https://ntl-collections-en.vercel.app/catalog/series/ntl_collections_catalog.json');
+                    if (!res.ok) throw new Error("Failed to load collections");
+                    const data = await res.json();
+                    
+                    let metas = [];
+                    if (data && data.metas) {
+                        metas = data.metas;
+                    } else if (Array.isArray(data)) {
+                        metas = data;
+                    }
+                    
+                    const localCollections = [
+                        {
+                            id: "tmdb:col:404609",
+                            title: "John Wick Collection",
+                            type: "collections",
+                            year: "2014 - 2023",
+                            rating: "8.3",
+                            genre: "Action, Crime, Thriller",
+                            overview: "Legendary assassin John Wick is forced back into the criminal underworld to seek vengeance against those who wronged him.",
+                            poster: "https://image.tmdb.org/t/p/w500/t2EG0hxQv6st7sfBEZ4lsBr2d24.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/lFBDo5gU0g2xYvP2z8o5g3a1Jp8P5.jpg"
+                        },
+                        {
+                            id: "tmdb:col:119",
+                            title: "The Lord of the Rings Trilogy",
+                            type: "collections",
+                            year: "2001 - 2003",
+                            rating: "8.8",
+                            genre: "Adventure, Fantasy",
+                            overview: "Peter Jackson's legendary film trilogy following Frodo Baggins' quest to destroy the One Ring.",
+                            poster: "https://image.tmdb.org/t/p/w500/pDT4Unn1N3n709.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/lFBDo5gU0g2xYvP2z8o5g3a1Jp8P5.jpg"
+                        },
+                        {
+                            id: "tmdb:col:263",
+                            title: "The Dark Knight Collection",
+                            type: "collections",
+                            year: "2005 - 2012",
+                            rating: "8.4",
+                            genre: "Action, Crime, Drama",
+                            overview: "Christopher Nolan's gritty superhero trilogy featuring Bruce Wayne's transition into Batman and his struggles to save Gotham City.",
+                            poster: "https://image.tmdb.org/t/p/w500/ogyw5LTmL53dVxsppcy8Dlm30Fu.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/xyhrCEdB4XRkelfVsqXeUZ6rLHi.jpg"
+                        },
+                        {
+                            id: "tmdb:col:2344",
+                            title: "The Matrix Collection",
+                            type: "collections",
+                            year: "1999 - 2021",
+                            rating: "8.1",
+                            genre: "Sci-Fi, Action",
+                            overview: "The sci-fi franchise that redefined action cinema, following humanity's rebellion against simulated control.",
+                            poster: "https://image.tmdb.org/t/p/w500/lhLyVw5hK3aO2i472tG86z4.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/xyhrCEdB4XRkelfVsqXeUZ6rLHi.jpg"
+                        }
+                    ];
+
+                    const fetchedMetas = metas.map(meta => ({
+                        id: meta.id,
+                        title: meta.name || meta.title || "Collection",
+                        type: 'collections',
+                        year: meta.releaseInfo || "",
+                        rating: meta.imdbRating || "8.0",
+                        genre: meta.genres ? meta.genres.join(', ') : 'Collection',
+                        overview: meta.description || "",
+                        poster: meta.poster || "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=500&auto=format&fit=crop",
+                        backdrop: meta.background || ""
+                    }));
+
+                    items = [...localCollections, ...fetchedMetas];
+
+                    if (filterQuery) {
+                        items = items.filter(item => item.title.toLowerCase().includes(filterQuery.toLowerCase()));
+                    }
+                } catch (err) {
+                    console.error("Error fetching collections:", err);
+                    items = [];
+                }
             } else if (filterQuery) {
                 // Query TMDB search live
                 const searchResults = await fetchTMDBSearch(filterQuery, loadedPagesCount);
@@ -3688,12 +3782,12 @@
             }
 
             // Client-side fallback genre filtering for Search, Watchlist, and local mock fallback cases
-            if (activeGenre !== 'All' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
+            if (activeGenre !== 'All' && activeTab !== 'collections' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
                 items = items.filter(item => item.genre && item.genre.toLowerCase().includes(activeGenre.toLowerCase()));
             }
 
             // Client-side year filtering for Search, Watchlist, and local mock fallback cases
-            if (activeYear !== 'All' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
+            if (activeYear !== 'All' && activeTab !== 'collections' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
                 items = items.filter(item => item.year === activeYear);
             }
 
@@ -3803,18 +3897,168 @@
 
             // Show or hide Season/Episode dropdown selectors
             const selectorContainer = document.getElementById('tv-season-episode-selector');
-            if (item.type === 'shows') {
-                selectorContainer.style.display = 'flex';
-                await loadTvShowDetails(item);
-            } else {
-                selectorContainer.style.display = 'none';
-            }
+            const collectionSection = document.getElementById('detail-collection-section');
+            const detailsActions = document.querySelector('.details-actions');
 
-            document.getElementById('details-modal').style.display = 'block';
+            if (item.type === 'collections') {
+                if (detailsActions) detailsActions.style.display = 'none';
+                if (selectorContainer) selectorContainer.style.display = 'none';
+                document.getElementById('detail-cast-section').style.display = 'none';
+                document.getElementById('detail-similar-section').style.display = 'none';
+                
+                if (collectionSection) {
+                    collectionSection.style.display = 'block';
+                    const collectionRow = document.getElementById('detail-collection-row');
+                    collectionRow.innerHTML = `
+                        <div style="padding: 20px; display: flex; align-items: center; justify-content: center; width: 100%;">
+                            <i data-lucide="loader-2" class="animate-spin" style="width: 24px; height: 24px; color: var(--accent-cinema);"></i>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('details-modal').style.display = 'block';
+                lucide.createIcons();
+                
+                // Fetch individual collection movies
+                loadCollectionMovies(item.id);
+            } else {
+                if (detailsActions) detailsActions.style.display = 'flex';
+                if (collectionSection) collectionSection.style.display = 'none';
+                
+                if (item.type === 'shows') {
+                    selectorContainer.style.display = 'flex';
+                    await loadTvShowDetails(item);
+                } else {
+                    selectorContainer.style.display = 'none';
+                }
+
+                document.getElementById('details-modal').style.display = 'block';
+                lucide.createIcons();
+                
+                // Load credits and recommendations
+                loadCreditsAndSimilar(item);
+            }
+        }
+
+        async function loadCollectionMovies(collectionId) {
+            const collectionRow = document.getElementById('detail-collection-row');
+            try {
+                if (collectionId.startsWith('tmdb:col:')) {
+                    const tmdbColId = collectionId.replace('tmdb:col:', '');
+                    const res = await fetch(`${TMDB_BASE_URL}/collection/${tmdbColId}?api_key=${TMDB_API_KEY}`);
+                    if (!res.ok) throw new Error("Failed to load TMDB collection");
+                    const data = await res.json();
+                    
+                    collectionRow.innerHTML = '';
+                    
+                    if (data && data.parts && data.parts.length > 0) {
+                        data.parts.forEach(movie => {
+                            const card = document.createElement('div');
+                            card.style.cssText = "flex: 0 0 100px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 6px; transition: transform 0.2s;";
+                            card.className = "collection-movie-card";
+                            card.onclick = () => {
+                                loadAndOpenMovieByTmdbId(movie.id);
+                            };
+                            const year = movie.release_date ? movie.release_date.substring(0, 4) : '';
+                            const poster = movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=500&auto=format&fit=crop";
+                            card.innerHTML = `
+                                <img src="${poster}" alt="${movie.title}" style="width: 100px; height: 150px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: #fff; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; width: 100%;">${movie.title}</span>
+                                <span style="font-size: 0.65rem; color: var(--text-muted);">${year}</span>
+                            `;
+                            collectionRow.appendChild(card);
+                        });
+                        
+                        document.querySelectorAll('.collection-movie-card').forEach(el => {
+                            el.addEventListener('mouseenter', () => el.style.transform = 'scale(1.05)');
+                            el.addEventListener('mouseleave', () => el.style.transform = 'scale(1)');
+                        });
+                    } else {
+                        collectionRow.innerHTML = '<div style="padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No movies in this collection.</div>';
+                    }
+                } else {
+                    const res = await fetch(`https://ntl-collections-en.vercel.app/meta/series/${collectionId}.json`);
+                    if (!res.ok) throw new Error("Failed to load collection details");
+                    const data = await res.json();
+                    
+                    collectionRow.innerHTML = '';
+                    
+                    if (data && data.meta && data.meta.videos && data.meta.videos.length > 0) {
+                        data.meta.videos.forEach(video => {
+                            const card = document.createElement('div');
+                            card.style.cssText = "flex: 0 0 100px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 6px; transition: transform 0.2s;";
+                            card.className = "collection-movie-card";
+                            card.onclick = () => {
+                                loadAndOpenMovieByImdbId(video.id);
+                            };
+                            const year = video.released ? video.released.substring(0, 4) : '';
+                            card.innerHTML = `
+                                <img src="${video.thumbnail}" alt="${video.title}" style="width: 100px; height: 150px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+                                <span style="font-size: 0.75rem; font-weight: 600; color: #fff; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; width: 100%;">${video.title}</span>
+                                <span style="font-size: 0.65rem; color: var(--text-muted);">${year}</span>
+                            `;
+                            collectionRow.appendChild(card);
+                        });
+                        
+                        document.querySelectorAll('.collection-movie-card').forEach(el => {
+                            el.addEventListener('mouseenter', () => el.style.transform = 'scale(1.05)');
+                            el.addEventListener('mouseleave', () => el.style.transform = 'scale(1)');
+                        });
+                    } else {
+                        collectionRow.innerHTML = '<div style="padding: 20px; color: var(--text-muted); font-size: 0.85rem;">No movies in this collection.</div>';
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading collection movies:", err);
+                collectionRow.innerHTML = '<div style="padding: 20px; color: #f43f5e; font-size: 0.85rem;">Failed to load movies.</div>';
+            }
             lucide.createIcons();
-            
-            // Load credits and recommendations
-            loadCreditsAndSimilar(item);
+        }
+
+        async function loadAndOpenMovieByTmdbId(tmdbId) {
+            try {
+                showNotification("Loading movie details...");
+                
+                const res = await fetch(`${TMDB_BASE_URL}/movie/${tmdbId}?api_key=${TMDB_API_KEY}`);
+                if (!res.ok) throw new Error("TMDB movie lookup failed");
+                const movie = await res.json();
+                
+                const item = mapTMDBItem(movie, 'movies');
+                
+                tmdbCache[item.id] = item;
+                
+                openDetailsModal(item);
+            } catch (err) {
+                console.error("Error loading movie by TMDB ID:", err);
+                showNotification("Failed to load details from TMDB");
+            }
+        }
+
+        async function loadAndOpenMovieByImdbId(imdbId) {
+            try {
+                showNotification("Loading movie details...");
+                
+                const res = await fetch(`${TMDB_BASE_URL}/find/${imdbId}?api_key=${TMDB_API_KEY}&external_source=imdb_id`);
+                if (!res.ok) throw new Error("TMDB lookup failed");
+                const data = await res.json();
+                
+                const movie = (data.movie_results && data.movie_results[0]) || (data.tv_results && data.tv_results[0]);
+                if (!movie) {
+                    showNotification("Movie details not found on TMDB");
+                    return;
+                }
+                
+                const mappedType = data.movie_results && data.movie_results.length > 0 ? 'movies' : 'shows';
+                const item = mapTMDBItem(movie, mappedType);
+                item.imdbId = imdbId; // Save IMDb ID directly to prevent redundant fetch during scrape resolving
+                
+                tmdbCache[item.id] = item;
+                
+                openDetailsModal(item);
+            } catch (err) {
+                console.error("Error loading movie by IMDb ID:", err);
+                showNotification("Failed to load details from TMDB");
+            }
         }
 
         async function loadTvShowDetails(item) {
@@ -5705,7 +5949,7 @@
 
             // 5. Directional Spatial Navigation 
             function navigate(direction) {
-                const focusableSelector = '.menu-item, .filter-pill, .genre-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, select, input, button, a';
+                const focusableSelector = '.menu-item, .filter-pill, .genre-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, select, input, button, a';
                 const activeContainer = getActiveFocusContainer();
                 
                 const allVisible = Array.from(activeContainer.querySelectorAll(focusableSelector)).filter(el => {
@@ -5924,7 +6168,7 @@
 
             // 8. Sync focus state when pointer/mouse hovers
             document.addEventListener('mouseover', function(e) {
-                const focusableSelector = '.menu-item, .filter-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, select, input, button, a';
+                const focusableSelector = '.menu-item, .filter-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, select, input, button, a';
                 const target = e.target.closest(focusableSelector);
                 if (target && !target.classList.contains('focused-tv')) {
                     document.querySelectorAll('.focused-tv').forEach(el => el.classList.remove('focused-tv'));

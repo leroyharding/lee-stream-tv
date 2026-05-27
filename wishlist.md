@@ -15,7 +15,7 @@ This file tracks potential future features and improvements for **LeeStreamTV**.
 | 3 | **Sort By** | Allow sorting catalog results by: Popularity, Release Date, Rating, Title A-Z | High | 🟡 |
 | 4 | **"New This Week" Shelf** | A dedicated section showing titles added to TMDB in the last 7 days | Medium | 🟡 |
 | 5 | **Trending on Social Media** | Pull trending titles from X/Twitter or Reddit discussions using a social data API | Low | 🔴 |
-| 6 | **TMDB Collections** | Allow users to browse movie collections (e.g. Marvel, Fast & Furious, Mission Impossible) | Medium | 🟡 |
+| 6 | **TMDB Collections** | (Completed) Allow users to browse movie collections (e.g. Marvel, Fast & Furious, Mission Impossible) | Medium | 🟡 |
 | 7 | **"Hidden Gems" Shelf** | A shelf that specifically surfaces highly rated but less popular titles (low vote count, high score) | Medium | 🟡 |
 
 ---
