@@ -3931,15 +3931,7 @@
                     return;
                 }
                 
-                if (hasNativeBridge()) {
-                    const bridge = window.LeeStreamTVBridge || window.LeePrimeBridge;
-                    if (bridge && typeof bridge.openYoutubeTrailer === 'function') {
-                        bridge.openYoutubeTrailer(trailer.key);
-                        return;
-                    }
-                }
-                
-                // Web/Fallback: Open trailer modal
+                // Open trailer modal in-app
                 openTrailerModal(trailer.key);
             } catch (err) {
                 console.error("Error watching trailer:", err);
