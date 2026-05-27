@@ -1,6 +1,6 @@
 {
-  "versionCode": 9,
-  "versionName": "1.5.4",
-  "changelog": "Enabled in-app YouTube trailer playback inside modal overlay and fixed footer version labels.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.4/LeeStreamTV_v1.5.4.apk"
+  "versionCode": 10,
+  "versionName": "1.5.5",
+  "changelog": "Restored native YouTube player launcher on Fire TV to resolve Error 153 configuration issues.",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.5/LeeStreamTV_v1.5.5.apk"
 }
