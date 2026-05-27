@@ -2818,8 +2818,8 @@
 
         async function checkAppUpdates() {
             try {
-                // Fetch the raw JSON version file from your GitHub repository
-                const res = await fetch('https://raw.githubusercontent.com/leroyharding/lee-stream-tv/main/update.json');
+                // Fetch the raw JSON version file from your GitHub repository (using cache-buster)
+                const res = await fetch('https://raw.githubusercontent.com/leroyharding/lee-stream-tv/main/update.json?t=' + Date.now());
                 if (!res.ok) return;
                 const updateInfo = await res.json();
                 
