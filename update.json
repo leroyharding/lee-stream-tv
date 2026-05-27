@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "1.5.1",
-  "changelog": "Fixed scraping terminal logs panel visibility to default to off; upgraded to v1.5.1.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.1/LeeStreamTV_v1.5.1.apk"
+  "versionCode": 7,
+  "versionName": "1.5.2",
+  "changelog": "Added a Filter by Year dropdown select box and optimized Real-Debrid sync logic connection timeout, dead proxy fallbacks, and account disconnect actions.",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.2/LeeStreamTV_v1.5.2.apk"
 }

@@ -156,6 +156,37 @@
             box-shadow: 0 0 15px rgba(255, 122, 0, 0.15);
         }
 
+        .select-accented {
+            background: var(--bg-input);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23ff7a00'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolyline%20points='6%209%2012%2015%2018%209'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .select-accented:focus {
+            border-color: var(--accent-cinema);
+            box-shadow: 0 0 15px rgba(255, 122, 0, 0.15);
+        }
+
+        .select-accented option {
+            background: #141418;
+            color: #fff;
+        }
+
         .btn-search-action {
             background: var(--accent-cinema);
             border: none;
@@ -1542,7 +1573,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.1</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.2</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -1574,6 +1605,66 @@
 
                         <div class="search-container" style="margin-bottom: 30px;">
                             <input type="text" class="input-accented" placeholder="Search movies, TV shows, debrid files..." id="cinema-search-input" onkeyup="handleCinemaSearch(event)">
+                            <select id="cinema-year-select" class="select-accented" onchange="changeYear(this.value)">
+                                <option value="All">All Years</option>
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                                <option value="2009">2009</option>
+                                <option value="2008">2008</option>
+                                <option value="2007">2007</option>
+                                <option value="2006">2006</option>
+                                <option value="2005">2005</option>
+                                <option value="2004">2004</option>
+                                <option value="2003">2003</option>
+                                <option value="2002">2002</option>
+                                <option value="2001">2001</option>
+                                <option value="2000">2000</option>
+                                <option value="1999">1999</option>
+                                <option value="1998">1998</option>
+                                <option value="1997">1997</option>
+                                <option value="1996">1996</option>
+                                <option value="1995">1995</option>
+                                <option value="1994">1994</option>
+                                <option value="1993">1993</option>
+                                <option value="1992">1992</option>
+                                <option value="1991">1991</option>
+                                <option value="1990">1990</option>
+                                <option value="1989">1989</option>
+                                <option value="1988">1988</option>
+                                <option value="1987">1987</option>
+                                <option value="1986">1986</option>
+                                <option value="1985">1985</option>
+                                <option value="1984">1984</option>
+                                <option value="1983">1983</option>
+                                <option value="1982">1982</option>
+                                <option value="1981">1981</option>
+                                <option value="1980">1980</option>
+                                <option value="1979">1979</option>
+                                <option value="1978">1978</option>
+                                <option value="1977">1977</option>
+                                <option value="1976">1976</option>
+                                <option value="1975">1975</option>
+                                <option value="1974">1974</option>
+                                <option value="1973">1973</option>
+                                <option value="1972">1972</option>
+                                <option value="1971">1971</option>
+                                <option value="1970">1970</option>
+                            </select>
                             <button class="btn-search-action" onclick="searchCinema()">
                                 <i data-lucide="search" style="width: 18px; height: 18px;"></i>
                                 <span>Search</span>
@@ -2405,8 +2496,14 @@
                 const isTV = type === 'shows';
                 const tmdbType = isTV ? 'tv' : 'movie';
                 
-                if (activeProvider) {
-                    endpoint = `/discover/${tmdbType}?api_key=${TMDB_API_KEY}&with_watch_providers=${activeProvider}&watch_region=US`;
+                const useDiscover = activeProvider || activeGenre !== 'All' || activeYear !== 'All';
+                
+                if (useDiscover) {
+                    endpoint = `/discover/${tmdbType}?api_key=${TMDB_API_KEY}`;
+                    
+                    if (activeProvider) {
+                        endpoint += `&with_watch_providers=${activeProvider}&watch_region=US`;
+                    }
                     
                     if (activeGenre !== 'All') {
                         let genreId = null;
@@ -2425,6 +2522,14 @@
                         }
                     }
                     
+                    if (activeYear !== 'All') {
+                        if (isTV) {
+                            endpoint += `&first_air_date_year=${activeYear}`;
+                        } else {
+                            endpoint += `&primary_release_year=${activeYear}`;
+                        }
+                    }
+                    
                     if (category === 'top_rated') {
                         endpoint += `&sort_by=vote_average.desc&vote_count.gte=100`;
                     } else if (category === 'upcoming') {
@@ -2436,47 +2541,6 @@
                         }
                     } else {
                         endpoint += `&sort_by=popularity.desc`;
-                    }
-                } else if (activeGenre !== 'All') {
-                    // Determine TMDB Genre ID
-                    let genreId = null;
-                    if (activeGenre === 'Sci-Fi') {
-                        genreId = isTV ? 10765 : 878;
-                    } else if (activeGenre === 'Action') {
-                        genreId = isTV ? 10759 : 28;
-                    } else if (activeGenre === 'Adventure') {
-                        genreId = isTV ? 10759 : 12;
-                    } else {
-                        const genreObj = genresList.find(g => g.name === activeGenre);
-                        genreId = genreObj ? genreObj.id : null;
-                    }
-                    
-                    if (genreId) {
-                        endpoint = `/discover/${tmdbType}?api_key=${TMDB_API_KEY}&with_genres=${genreId}`;
-                        
-                        if (category === 'top_rated') {
-                            endpoint += `&sort_by=vote_average.desc&vote_count.gte=100`;
-                        } else if (category === 'upcoming') {
-                            const today = new Date().toISOString().split('T')[0];
-                            if (isTV) {
-                                endpoint += `&first_air_date.gte=${today}&sort_by=first_air_date.asc`;
-                            } else {
-                                endpoint += `&primary_release_date.gte=${today}&sort_by=primary_release_date.asc`;
-                            }
-                        } else {
-                            // popular or trending (discover proxy)
-                            endpoint += `&sort_by=popularity.desc`;
-                        }
-                    } else {
-                        if (category === 'trending') {
-                            endpoint = `/trending/${tmdbType}/week?api_key=${TMDB_API_KEY}`;
-                        } else if (category === 'upcoming') {
-                            endpoint = isTV ? `/tv/on_the_air?api_key=${TMDB_API_KEY}` : `/movie/upcoming?api_key=${TMDB_API_KEY}`;
-                        } else if (category === 'top_rated') {
-                            endpoint = `/${tmdbType}/top_rated?api_key=${TMDB_API_KEY}`;
-                        } else {
-                            endpoint = `/${tmdbType}/popular?api_key=${TMDB_API_KEY}`;
-                        }
                     }
                 } else {
                     if (category === 'trending') {
@@ -2628,6 +2692,7 @@
         let activeCategory = 'trending';
         let activeGenre = 'All';
         let activeProvider = null;
+        let activeYear = 'All';
         let selectedMedia = null;
         let loadedPagesCount = 5; // Default pages count (100 titles)
 
@@ -2682,6 +2747,14 @@
             // Re-render catalog
             loadedPagesCount = 5; // Reset page count
             renderCatalog();
+        }
+
+        function changeYear(yearValue) {
+            activeYear = yearValue;
+            loadedPagesCount = 5;
+            const searchInput = document.getElementById('cinema-search-input');
+            const query = searchInput ? searchInput.value : '';
+            renderCatalog(query);
         }
 
         
@@ -2741,7 +2814,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 6; // Increment this with every release
+        const CURRENT_VERSION_CODE = 7; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -2876,6 +2949,9 @@
             activeTab = tab;
             activeGenre = 'All'; // Reset genre on tab switch
             activeProvider = null; // Clear watch provider on tab switch
+            activeYear = 'All';
+            const yearSelect = document.getElementById('cinema-year-select');
+            if (yearSelect) yearSelect.value = 'All';
             initGenreBar(); // Re-render genre pills for resetting 'All' active state
             
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -2938,6 +3014,9 @@
             loadedPagesCount = 5; // Reset page count
             activeProvider = providerId;
             activeGenre = 'All'; // Reset genre when changing provider
+            activeYear = 'All';
+            const yearSelect = document.getElementById('cinema-year-select');
+            if (yearSelect) yearSelect.value = 'All';
             initGenreBar(); // Reset genre pills
             
             // Highlight active provider menu item
@@ -3024,9 +3103,62 @@
 
         // Transparent CORS proxy fallback mechanism for Real-Debrid API calls
         async function fetchWithCORS(url, options = {}) {
+            const timeout = options.timeout || 10000; // 10s timeout to prevent hanging on bad proxies
+            
+            async function fetchWithTimeout(fetchUrl, fetchOptions) {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                try {
+                    const response = await fetch(fetchUrl, {
+                        ...fetchOptions,
+                        signal: controller.signal
+                    });
+                    clearTimeout(id);
+                    
+                    if (response.ok) {
+                        const originalJson = response.json.bind(response);
+                        response.json = async function() {
+                            const data = await originalJson();
+                            if (data && typeof data === 'object' && 'contents' in data) {
+                                try {
+                                    return JSON.parse(data.contents);
+                                } catch (e) {
+                                    return data.contents;
+                                }
+                            }
+                            return data;
+                        };
+                        
+                        // Override clone to preserve custom json unwrap on cloned response
+                        const originalClone = response.clone.bind(response);
+                        response.clone = function() {
+                            const clonedRes = originalClone();
+                            const originalClonedJson = clonedRes.json.bind(clonedRes);
+                            clonedRes.json = async function() {
+                                const data = await originalClonedJson();
+                                if (data && typeof data === 'object' && 'contents' in data) {
+                                    try {
+                                        return JSON.parse(data.contents);
+                                    } catch (e) {
+                                        return data.contents;
+                                    }
+                                }
+                                return data;
+                            };
+                            return clonedRes;
+                        };
+                    }
+                    
+                    return response;
+                } catch (err) {
+                    clearTimeout(id);
+                    throw err;
+                }
+            }
+            
             try {
                 // Try direct fetch first (if running in CORS-disabled environment like Electron or extension active)
-                const response = await fetch(url, options);
+                const response = await fetchWithTimeout(url, options);
                 return response;
             } catch (directError) {
                 console.warn(`Direct fetch to ${url} failed (CORS/Network error). Trying CORS proxy fallback...`, directError);
@@ -3036,14 +3168,14 @@
                     (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
                     (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
                     (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-                    (u) => `https://yacdn.org/proxy/${u}`
+                    (u) => `https://thingproxy.freeboard.io/fetch/${u}`
                 ];
                 
                 for (const getProxyUrl of proxies) {
                     const proxyUrl = getProxyUrl(url);
                     try {
                         console.log(`Attempting fetch via proxy: ${proxyUrl}`);
-                        const response = await fetch(proxyUrl, options);
+                        const response = await fetchWithTimeout(proxyUrl, options);
                         
                         if (response.ok) {
                             return response;
@@ -3054,6 +3186,15 @@
                         if (response.status === 400 && url.includes('device/credentials')) {
                             return response;
                         }
+                        
+                        // Check if a proxy wraps error responses with a 200 status code
+                        try {
+                            const clone = response.clone();
+                            const json = await clone.json();
+                            if (json && json.error === 'authorization_pending') {
+                                return response;
+                            }
+                        } catch (e) {}
                         
                         throw new Error(`Proxy returned HTTP error status ${response.status}`);
                     } catch (proxyError) {
@@ -3112,19 +3253,52 @@
         }
 
         async function startRDDeviceFlow() {
+            const stepsEl = document.getElementById('rd-auth-steps');
+            if (stepsEl && !document.getElementById('rd-device-code')) {
+                stepsEl.innerHTML = `
+                                <!-- Step 1 -->
+                                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 122, 0, 0.15); color: var(--accent-cinema); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">1</div>
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.45; text-align: left;">
+                                        Visit <a href="https://real-debrid.com/device" target="_blank" style="color: var(--accent-cinema); font-weight: 600; text-decoration: none;">real-debrid.com/device</a> on your phone or computer.
+                                    </p>
+                                </div>
+                                
+                                <!-- Step 2 -->
+                                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                                    <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(255, 122, 0, 0.15); color: var(--accent-cinema); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">2</div>
+                                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.45; text-align: left;">
+                                        Enter the authorization code below:
+                                    </p>
+                                </div>
+
+                                <!-- Code Display Box -->
+                                <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 12px; text-align: center; width: 100%; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
+                                    <span id="rd-device-code" style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: #fff; letter-spacing: 4px; text-shadow: 0 0 10px rgba(255,255,255,0.2);">------</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-secondary); padding: 0 4px; border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 12px; margin-top: 4px;">
+                                    <span>Expires in: <strong id="rd-timer" style="font-family: var(--font-mono); color: #f43f5e; font-weight: 600;">05:00</strong></span>
+                                    <span id="rd-status-indicator" style="color: var(--accent-premium); display: flex; align-items: center; gap: 6px;">
+                                        <i data-lucide="loader-2" class="animate-spin" style="width: 12px; height: 12px;"></i> Generating code...
+                                    </span>
+                                </div>
+                `;
+            }
+
+            // Retrieve DOM elements AFTER innerHTML replacement to avoid null reference crashes
             const codeEl = document.getElementById('rd-device-code');
             const timerEl = document.getElementById('rd-timer');
             const statusEl = document.getElementById('rd-status-indicator');
             
-            // Reset button to default state if it was "Close Panel"
+            // Reset button to default state if it was "Close Panel" or "Disconnect"
             const btn = document.getElementById('btn-rd-authorize');
             if (btn) {
                 btn.innerHTML = `<i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i> <span>Refresh Code</span>`;
                 btn.onclick = startRDDeviceFlow;
             }
             
-            codeEl.innerText = "LOADING";
-            statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 12px; height: 12px;"></i> Generating code...`;
+            if (codeEl) codeEl.innerText = "LOADING";
+            if (statusEl) statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 12px; height: 12px;"></i> Generating code...`;
             lucide.createIcons();
             
             try {
@@ -3133,15 +3307,15 @@
                 if (!response.ok) throw new Error('CORS or Network Blocked');
                 const data = await response.json();
                 
-                codeEl.innerText = data.user_code;
-                statusEl.innerText = "Pairing with Real-Debrid...";
+                if (codeEl) codeEl.innerText = data.user_code;
+                if (statusEl) statusEl.innerText = "Pairing with Real-Debrid...";
                 
-                startRDTimer(data.expires_in);
-                startRDPolling(data.device_code, data.interval);
+                startRDTimer(data.expires_in || 600);
+                startRDPolling(data.device_code, data.interval || 5);
             } catch (e) {
                 console.error("Real-Debrid API access blocked/CORS restricted:", e);
-                codeEl.innerText = "-----";
-                statusEl.innerHTML = `<span style="color: #f43f5e;">API Error: Connection failed. Please enter token manually.</span>`;
+                if (codeEl) codeEl.innerText = "-----";
+                if (statusEl) statusEl.innerHTML = `<span style="color: #f43f5e;">API Error: Connection failed. Please enter token manually.</span>`;
                 clearInterval(rdTimerInterval);
                 clearInterval(rdPollingInterval);
             }
@@ -3149,7 +3323,7 @@
 
         function startRDTimer(expiresIn) {
             clearInterval(rdTimerInterval);
-            let timeRemaining = expiresIn;
+            let timeRemaining = expiresIn || 600;
             const timerEl = document.getElementById('rd-timer');
             
             rdTimerInterval = setInterval(() => {
@@ -3178,6 +3352,16 @@
                     if (!res.ok) throw new Error('Polling failed');
                     
                     const credentials = await res.json();
+                    if (!credentials || !credentials.client_id || !credentials.client_secret) {
+                        if (credentials && credentials.error) {
+                            if (credentials.error === 'authorization_pending' || credentials.error === 'slow_down') {
+                                return; // Still waiting, keep polling
+                            }
+                            throw new Error(credentials.error_description || credentials.error);
+                        }
+                        return; // Keep polling
+                    }
+                    
                     clearInterval(rdPollingInterval);
                     clearInterval(rdTimerInterval);
                     
@@ -3221,6 +3405,31 @@
             }
         }
 
+        function disconnectDebrid() {
+            localStorage.removeItem('rd_access_token');
+            localStorage.removeItem('rd_username');
+            localStorage.removeItem('rd_user_type');
+            localStorage.removeItem('rd_premium_seconds');
+            isRealDebridEnabled = false;
+            
+            const toggle = document.getElementById('debrid-toggle');
+            if (toggle) toggle.checked = false;
+            
+            clearInterval(rdPollingInterval);
+            clearInterval(rdTimerInterval);
+            
+            showNotification("Real-Debrid Disconnected");
+            
+            // Restore default pairing UI view in the modal by removing rd-device-code, then starting flow
+            const stepsEl = document.getElementById('rd-auth-steps');
+            if (stepsEl) {
+                stepsEl.innerHTML = '';
+            }
+            
+            // Trigger new device flow
+            startRDDeviceFlow();
+        }
+
         function showRDAccessGranted(userData) {
             const username = typeof userData === 'string' ? userData : (userData.username || "User");
             const userType = typeof userData === 'object' ? (userData.type || 'free') : 'premium';
@@ -3244,6 +3453,11 @@
                         <span style="background: rgba(62, 207, 142, 0.15); color: var(--accent-premium); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">
                             Premium: ${daysLeft} Days Active
                         </span>
+                        <div style="margin-top: 15px;">
+                            <button onclick="disconnectDebrid()" class="btn-secondary-action" style="padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2); color: #f43f5e; font-weight: 600; margin: auto;">
+                                <i data-lucide="log-out" style="width: 12px; height: 12px;"></i> Disconnect Account
+                            </button>
+                        </div>
                     </div>
                 `;
             } else {
@@ -3254,9 +3468,14 @@
                         <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.45;">
                             Connected as <strong>${username}</strong>, but your subscription is inactive. Real-Debrid streams require an active premium membership.
                         </p>
-                        <a href="https://real-debrid.com/premium" target="_blank" style="background: #f43f5e; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
-                            Purchase Premium <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
-                        </a>
+                        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                            <a href="https://real-debrid.com/premium" target="_blank" style="background: #f43f5e; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
+                                Purchase Premium <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            <button onclick="disconnectDebrid()" style="background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Disconnect
+                            </button>
+                        </div>
                     </div>
                 `;
             }
@@ -3458,6 +3677,11 @@
             // Client-side fallback genre filtering for Search, Watchlist, and local mock fallback cases
             if (activeGenre !== 'All' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
                 items = items.filter(item => item.genre && item.genre.toLowerCase().includes(activeGenre.toLowerCase()));
+            }
+
+            // Client-side year filtering for Search, Watchlist, and local mock fallback cases
+            if (activeYear !== 'All' && (activeTab === 'watchlist' || filterQuery || fetchedItems === null)) {
+                items = items.filter(item => item.year === activeYear);
             }
 
             // Put items in global cache for detail model lookup
@@ -5272,7 +5496,7 @@
                     z-index: 1000 !important;
                     position: relative;
                 }
-                .media-card, .livetv-channel-card, .menu-item, .filter-pill, .source-item, .btn-modal-close, .btn-primary-action, .action-btn, .switch, .btn-player-option, .link-row {
+                .media-card, .livetv-channel-card, .menu-item, .filter-pill, .source-item, .btn-modal-close, .btn-primary-action, .action-btn, .switch, .btn-player-option, .link-row, select {
                     transition: transform 0.2s ease !important;
                 }
                 .livetv-channel-card.focused-tv {
@@ -5291,7 +5515,7 @@
                     border-color: var(--accent-cinema) !important;
                     transform: scale(1.02) !important;
                 }
-                input.focused-tv {
+                input.focused-tv, select.focused-tv {
                     background: rgba(255, 255, 255, 0.15) !important;
                     box-shadow: 0 0 15px rgba(255, 140, 0, 0.3) !important;
                 }
