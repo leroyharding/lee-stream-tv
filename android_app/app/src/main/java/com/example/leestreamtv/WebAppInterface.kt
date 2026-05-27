@@ -181,6 +181,29 @@ class WebAppInterface(private val mContext: Context) {
         }
     }
 
+    @JavascriptInterface
+    fun openYoutubeTrailer(videoId: String) {
+        val intentApp = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoId")).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val intentWeb = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=$videoId")).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        
+        val activity = mContext as? android.app.Activity
+        try {
+            mContext.startActivity(intentApp)
+        } catch (e: Exception) {
+            try {
+                mContext.startActivity(intentWeb)
+            } catch (ex: Exception) {
+                activity?.runOnUiThread {
+                    Toast.makeText(mContext, "Could not open YouTube: ${ex.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun sanitizeUrl(url: String): String {
         return url
             .replace(" ", "%20")

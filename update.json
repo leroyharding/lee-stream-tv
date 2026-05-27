@@ -1,6 +1,6 @@
 {
-  "versionCode": 7,
-  "versionName": "1.5.2",
-  "changelog": "Added a Filter by Year dropdown select box and optimized Real-Debrid sync logic connection timeout, dead proxy fallbacks, and account disconnect actions.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.2/LeeStreamTV_v1.5.2.apk"
+  "versionCode": 8,
+  "versionName": "1.5.3",
+  "changelog": "Added Watch Trailer button to details panel and built native YouTube player integration.",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.3/LeeStreamTV_v1.5.3.apk"
 }

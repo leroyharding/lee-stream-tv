@@ -539,6 +539,7 @@
 
         .details-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             margin-top: 20px;
         }
@@ -1953,6 +1954,10 @@
                                         <i data-lucide="play" style="width: 20px; height: 20px; fill: currentColor;"></i>
                                         <span>Find Stream Links</span>
                                     </button>
+                                    <button class="btn-secondary-action" id="trailer-action-btn" onclick="watchTrailer()">
+                                        <i data-lucide="film" style="width: 18px; height: 18px;"></i>
+                                        <span>Watch Trailer</span>
+                                    </button>
                                     <button class="btn-secondary-action" id="watchlist-action-btn" onclick="toggleWatchlist()">
                                         <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
                                         <span>Add to Watchlist</span>
@@ -1976,6 +1981,14 @@
                                 <!-- Filled dynamically -->
                             </div>
                         </div>
+                    </div>
+
+                    <!-- ------------------ TRAILER MODAL ------------------ -->
+                    <div class="cinema-details-modal" id="trailer-modal" style="max-width: 800px; height: 480px; margin: auto; border: 1px solid var(--accent-cinema); box-shadow: 0 0 50px var(--accent-cinema-glow); top: 15%; border-radius: 16px; display: none; padding: 20px; overflow: hidden; background: #000;">
+                        <button class="btn-modal-close" onclick="closeTrailerModal()" style="z-index: 10;">
+                            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                        </button>
+                        <iframe id="trailer-video-iframe" style="width: 100%; height: 100%; border: none; border-radius: 12px;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                     </div>
 
                     <!-- ------------------ REAL-DEBRID SYNC MODAL ------------------ -->
@@ -2814,7 +2827,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 7; // Increment this with every release
+        const CURRENT_VERSION_CODE = 8; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3885,6 +3898,87 @@
 
         function closeDetailsModal() {
             document.getElementById('details-modal').style.display = 'none';
+        }
+
+        async function watchTrailer() {
+            if (!selectedMedia) return;
+            const tmdbId = getTMDBId(selectedMedia);
+            if (!tmdbId) {
+                showNotification("TMDB ID not found for this item");
+                return;
+            }
+            
+            const tmdbType = selectedMedia.type === 'shows' ? 'tv' : 'movie';
+            const btn = document.getElementById('trailer-action-btn');
+            const originalHTML = btn.innerHTML;
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 18px; height: 18px;"></i> <span>Loading...</span>`;
+                lucide.createIcons();
+                
+                const res = await fetch(`${TMDB_BASE_URL}/${tmdbType}/${tmdbId}/videos?api_key=${TMDB_API_KEY}`);
+                if (!res.ok) throw new Error("Failed to fetch videos");
+                const data = await res.json();
+                
+                // Find trailer key
+                const trailer = (data.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer' && v.official)
+                             || (data.results || []).find(v => v.site === 'YouTube' && v.type === 'Trailer')
+                             || (data.results || []).find(v => v.site === 'YouTube' && (v.type === 'Teaser' || v.type === 'Clip'));
+                             
+                if (!trailer || !trailer.key) {
+                    showNotification("No YouTube trailer available for this title");
+                    return;
+                }
+                
+                if (hasNativeBridge()) {
+                    const bridge = window.LeeStreamTVBridge || window.LeePrimeBridge;
+                    if (bridge && typeof bridge.openYoutubeTrailer === 'function') {
+                        bridge.openYoutubeTrailer(trailer.key);
+                        return;
+                    }
+                }
+                
+                // Web/Fallback: Open trailer modal
+                openTrailerModal(trailer.key);
+            } catch (err) {
+                console.error("Error watching trailer:", err);
+                showNotification("Failed to retrieve trailer information");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                lucide.createIcons();
+            }
+        }
+
+        function openTrailerModal(key) {
+            const modal = document.getElementById('trailer-modal');
+            const iframe = document.getElementById('trailer-video-iframe');
+            if (modal && iframe) {
+                iframe.src = `https://www.youtube.com/embed/${key}?autoplay=1`;
+                modal.style.display = 'block';
+                
+                // Trapping focus: focus the close button of the trailer modal
+                const closeBtn = modal.querySelector('.btn-modal-close');
+                if (closeBtn && typeof setFocus === 'function') {
+                    setFocus(closeBtn);
+                }
+            }
+        }
+
+        function closeTrailerModal() {
+            const modal = document.getElementById('trailer-modal');
+            const iframe = document.getElementById('trailer-video-iframe');
+            if (modal && iframe) {
+                iframe.src = '';
+                modal.style.display = 'none';
+                
+                // Restore focus to the watch trailer button
+                const trailerBtn = document.getElementById('trailer-action-btn');
+                if (trailerBtn && typeof setFocus === 'function') {
+                    setFocus(trailerBtn);
+                }
+            }
         }
 
         // Watchlist local persistence toggles
@@ -5496,7 +5590,7 @@
                     z-index: 1000 !important;
                     position: relative;
                 }
-                .media-card, .livetv-channel-card, .menu-item, .filter-pill, .source-item, .btn-modal-close, .btn-primary-action, .action-btn, .switch, .btn-player-option, .link-row, select {
+                .media-card, .livetv-channel-card, .menu-item, .filter-pill, .source-item, .btn-modal-close, .btn-primary-action, .btn-secondary-action, .action-btn, .switch, .btn-player-option, .link-row, select {
                     transition: transform 0.2s ease !important;
                 }
                 .livetv-channel-card.focused-tv {
@@ -5544,12 +5638,12 @@
             // 2. State configuration
             let lastFocusedElement = null;
 
-            // 3. Helper to determine the active modal or content container
             function getActiveFocusContainer() {
                 const playerChooser = document.getElementById('player-chooser-modal');
                 const videoOverlay = document.getElementById('video-player-overlay');
                 const scraperOverlay = document.getElementById('scraper-overlay');
                 const debridModal = document.getElementById('debrid-modal');
+                const trailerModal = document.getElementById('trailer-modal');
                 const detailsModal = document.getElementById('details-modal');
                 const updateModal = document.getElementById('update-modal');
                 
@@ -5561,6 +5655,8 @@
                     return scraperOverlay;
                 } else if (debridModal && debridModal.style.display === 'block') {
                     return debridModal;
+                } else if (trailerModal && trailerModal.style.display === 'block') {
+                    return trailerModal;
                 } else if (detailsModal && detailsModal.style.display === 'block') {
                     return detailsModal;
                 } else if (updateModal && updateModal.style.display === 'block') {
@@ -5743,6 +5839,7 @@
                 const videoOverlay = document.getElementById('video-player-overlay');
                 const scraperOverlay = document.getElementById('scraper-overlay');
                 const debridModal = document.getElementById('debrid-modal');
+                const trailerModal = document.getElementById('trailer-modal');
                 const detailsModal = document.getElementById('details-modal');
                 const updateModal = document.getElementById('update-modal');
                 
@@ -5754,6 +5851,8 @@
                     closeScraperOverlay();
                 } else if (debridModal && debridModal.style.display === 'block') {
                     closeDebridModal();
+                } else if (trailerModal && trailerModal.style.display === 'block') {
+                    closeTrailerModal();
                 } else if (detailsModal && detailsModal.style.display === 'block') {
                     closeDetailsModal();
                 } else if (updateModal && updateModal.style.display === 'block') {
@@ -5910,6 +6009,13 @@
                 const updateModal = document.getElementById('update-modal');
                 if (updateModal && updateModal.style.display && updateModal.style.display !== 'none') {
                     closeUpdateModal();
+                    return true;
+                }
+                
+                // Close Trailer Modal if open
+                const trailerModal = document.getElementById('trailer-modal');
+                if (trailerModal && trailerModal.style.display && trailerModal.style.display !== 'none') {
+                    closeTrailerModal();
                     return true;
                 }
                 
