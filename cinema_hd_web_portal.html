@@ -1577,7 +1577,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.6</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.7</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -2838,7 +2838,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 11; // Increment this with every release
+        const CURRENT_VERSION_CODE = 12; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -4013,6 +4013,14 @@
                 collectionRow.innerHTML = '<div style="padding: 20px; color: #f43f5e; font-size: 0.85rem;">Failed to load movies.</div>';
             }
             lucide.createIcons();
+
+            // Auto-focus first collection movie card when loaded and modal is visible
+            setTimeout(() => {
+                const firstCard = collectionRow.querySelector('.collection-movie-card');
+                if (firstCard && document.getElementById('details-modal').style.display === 'block') {
+                    setFocus(firstCard);
+                }
+            }, 150);
         }
 
         async function loadAndOpenMovieByTmdbId(tmdbId) {
@@ -5937,6 +5945,24 @@
                             left: targetScrollLeft,
                             behavior: 'smooth'
                         });
+
+                        // Scroll parent vertically if the element itself is not fully in view
+                        let parent = element.parentElement;
+                        while (parent && parent !== document.body) {
+                            const style = window.getComputedStyle(parent);
+                            if (parent.scrollHeight > parent.clientHeight && (style.overflowY === 'auto' || style.overflowY === 'scroll')) {
+                                const parentRect = parent.getBoundingClientRect();
+                                if (elemRect.bottom > parentRect.bottom || elemRect.top < parentRect.top) {
+                                    const targetScrollTop = parent.scrollTop + (elemRect.top - parentRect.top) - (parentRect.height / 2) + (elemRect.height / 2);
+                                    parent.scrollTo({
+                                        top: targetScrollTop,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                                break;
+                            }
+                            parent = parent.parentElement;
+                        }
                     } else {
                         element.scrollIntoView({
                             behavior: 'smooth',
@@ -6183,8 +6209,9 @@
             window.openDetailsModal = async function(item) {
                 await originalOpenDetails(item);
                 setTimeout(() => {
-                    const firstFocus = document.querySelector('#details-modal .btn-primary-action') || 
-                                       document.querySelector('#details-modal .btn-modal-close');
+                    const isCollection = item.type === 'collections';
+                    const btnPrimary = document.querySelector('#details-modal .btn-primary-action');
+                    const firstFocus = (!isCollection && btnPrimary) ? btnPrimary : document.querySelector('#details-modal .btn-modal-close');
                     if (firstFocus) setFocus(firstFocus);
                 }, 200);
             };

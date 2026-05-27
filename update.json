@@ -1,6 +1,6 @@
 {
-  "versionCode": 11,
-  "versionName": "1.5.6",
-  "changelog": "Integrated Stremio Collections addon to discover and browse themed movie collections directly in-app.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.6/LeeStreamTV_v1.5.6.apk"
+  "versionCode": 12,
+  "versionName": "1.5.7",
+  "changelog": "Fixed vertical scrolling and D-pad remote navigation inside the Movie Collections details modal.",
+  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.7/LeeStreamTV_v1.5.7.apk"
 }
