@@ -971,6 +971,142 @@
             background: var(--accent-cinema);
         }
 
+        /* Continue Watching Carousel Styles */
+        .continue-progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 2;
+        }
+        .continue-progress-bar-fill {
+            height: 100%;
+            background: var(--accent-cinema);
+            transition: width 0.3s ease;
+        }
+        .continue-episode-badge {
+            position: absolute;
+            bottom: 12px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            z-index: 3;
+        }
+        .continue-watching-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 105px;
+            min-width: 105px;
+            flex-shrink: 0;
+        }
+        .continue-watching-card:hover, .continue-watching-card.focused-tv {
+            transform: translateY(-4px);
+            border-color: rgba(255, 122, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 122, 0, 0.1);
+        }
+
+        /* Episode Guide Styles */
+        .episode-row-card {
+            display: flex;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .episode-row-card:hover, .episode-row-card.focused-tv {
+            background: rgba(255, 122, 0, 0.05);
+            border-color: rgba(255, 122, 0, 0.2);
+            transform: translateX(4px);
+        }
+        .episode-still {
+            width: 120px;
+            aspect-ratio: 16 / 9;
+            border-radius: 8px;
+            object-fit: cover;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .episode-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .episode-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .episode-number-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .episode-airdate {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .episode-overview {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .btn-play-episode {
+            background: rgba(255, 122, 0, 0.1);
+            border: 1px solid rgba(255, 122, 0, 0.3);
+            color: var(--accent-cinema);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .episode-row-card:hover .btn-play-episode, .episode-row-card.focused-tv .btn-play-episode {
+            background: var(--accent-cinema);
+            color: #000;
+            border-color: var(--accent-cinema);
+        }
+
         .cast-card {
             display: flex;
             flex-direction: column;
@@ -1577,7 +1713,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.5.7</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.0</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -1690,6 +1826,19 @@
                             </div>
                         </div>
 
+                        <!-- Continue Watching Shelf Container -->
+                        <div id="continue-watching-shelf-container" style="display: none; flex-direction: column; gap: 15px; margin-bottom: 30px; flex-shrink: 0; width: 100%;">
+                            <div class="cinema-shelf-header" style="margin-bottom: 5px;">
+                                <span class="cinema-shelf-title" style="font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                                    <i data-lucide="play-circle" style="width: 20px; height: 20px; color: var(--accent-cinema);"></i>
+                                    Continue Watching
+                                </span>
+                                <span class="debrid-label" id="continue-watching-count" style="font-size: 0.75rem;"></span>
+                            </div>
+                            <div class="horizontal-scroll-row" id="continue-watching-row" style="padding: 10px 0;">
+                                <!-- Dynamic Cards -->
+                            </div>
+                        </div>
 
                         <div class="cinema-shelf-header">
                             <span class="cinema-shelf-title" id="shelf-title-label">Trending Movie Releases</span>
@@ -1966,6 +2115,34 @@
                                         <span>Add to Watchlist</span>
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Episode Guide Shelf -->
+                        <div class="details-extra-section" id="detail-episode-guide-section" style="margin-top: 30px; display: none; flex-direction: column; gap: 20px;">
+                            <h3 class="cinema-shelf-title" style="font-size: 1.25rem; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="calendar" style="width: 20px; height: 20px; color: var(--accent-cinema);"></i>
+                                Episode Guide
+                            </h3>
+                            
+                            <!-- Season Tabs Row -->
+                            <div class="horizontal-scroll-row" id="episode-guide-seasons-tabs" style="padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 10px; margin-bottom: 15px;">
+                                <!-- Season pills populated here -->
+                            </div>
+                            
+                            <!-- Season Info Card (Artwork, Description, Air Date) -->
+                            <div id="season-info-panel" style="display: flex; gap: 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 16px; margin-bottom: 15px; flex-wrap: wrap;">
+                                <img id="season-poster" src="" alt="Season Artwork" style="width: 90px; height: 135px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
+                                <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 200px;">
+                                    <h4 id="season-title" style="font-size: 1.1rem; color: #fff; font-weight: 700;">Season Name</h4>
+                                    <span id="season-meta" style="font-size: 0.8rem; color: var(--accent-cinema); font-weight: 500;">X Episodes • Premiered YYYY</span>
+                                    <p id="season-overview" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">Season description overview.</p>
+                                </div>
+                            </div>
+
+                            <!-- Episodes List -->
+                            <div id="episode-guide-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 10px;">
+                                <!-- Episode cards populated here -->
                             </div>
                         </div>
 
@@ -2426,6 +2603,7 @@
             
             const overview = item.overview || 'No synopsis available for this title.';
             const poster = item.poster_path ? `${TMDB_IMAGE_BASE}${item.poster_path}` : 'https://images.unsplash.com/photo-1594909122845-11baa439b7bf?q=80&w=500&auto=format&fit=crop';
+            const backdrop = item.backdrop_path ? `${TMDB_IMAGE_BASE}${item.backdrop_path}` : poster;
             
             const sampleVideos = [
                 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
@@ -2437,7 +2615,7 @@
             ];
             const source = sampleVideos[item.id % sampleVideos.length];
 
-            return { id, tmdbId: item.id, title, type, year, rating, genre: genreList, overview, poster, source };
+            return { id, tmdbId: item.id, title, type, year, rating, genre: genreList, overview, poster, backdrop, source };
         }
 
         // TMDb Live Fetch Helper Routines
@@ -2718,6 +2896,8 @@
         let activeProvider = null;
         let activeYear = 'All';
         let selectedMedia = null;
+        let detailsProgress = null;
+        let currentSeasonsCached = [];
         let loadedPagesCount = 5; // Default pages count (100 titles)
 
         const genresList = [
@@ -2794,6 +2974,118 @@
             localStorage.removeItem('cinema_watchlist');
         }
         let isRealDebridEnabled = false;
+
+        // Continue Watching State & Helper Functions
+        let continueWatching = JSON.parse(localStorage.getItem('leestreamtv_continue_watching')) || [];
+        let currentPlayingItem = null;
+
+        function saveContinueWatching(item) {
+            let list = JSON.parse(localStorage.getItem('leestreamtv_continue_watching')) || [];
+            list = list.filter(x => x.id !== item.id);
+            list.unshift(item);
+            list = list.slice(0, 20);
+            localStorage.setItem('leestreamtv_continue_watching', JSON.stringify(list));
+            continueWatching = list;
+            renderContinueWatching();
+        }
+
+        function removeContinueWatching(id) {
+            let list = JSON.parse(localStorage.getItem('leestreamtv_continue_watching')) || [];
+            list = list.filter(x => x.id !== id);
+            localStorage.setItem('leestreamtv_continue_watching', JSON.stringify(list));
+            continueWatching = list;
+            renderContinueWatching();
+        }
+
+        function getContinueWatchingItem(id) {
+            let list = JSON.parse(localStorage.getItem('leestreamtv_continue_watching')) || [];
+            return list.find(x => x.id === id) || null;
+        }
+
+        function renderContinueWatching() {
+            const shelf = document.getElementById('continue-watching-shelf-container');
+            const row = document.getElementById('continue-watching-row');
+            const countLabel = document.getElementById('continue-watching-count');
+            
+            const searchInput = document.getElementById('cinema-search-input');
+            const isSearching = searchInput && searchInput.value.trim() !== '';
+            const isEligibleTab = activeTab === 'movies' || activeTab === 'shows' || activeTab === 'watchlist';
+            
+            let itemsToShow = continueWatching;
+            if (activeTab === 'movies') {
+                itemsToShow = continueWatching.filter(x => x.type === 'movies');
+            } else if (activeTab === 'shows') {
+                itemsToShow = continueWatching.filter(x => x.type === 'shows');
+            }
+            
+            if (!isEligibleTab || isSearching || itemsToShow.length === 0) {
+                if (shelf) shelf.style.display = 'none';
+                return;
+            }
+            
+            if (shelf) shelf.style.display = 'flex';
+            if (countLabel) countLabel.innerText = `${itemsToShow.length} in progress`;
+            
+            if (row) {
+                row.innerHTML = '';
+                itemsToShow.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'continue-watching-card';
+                    card.onclick = () => openDetailsModal(item);
+                    
+                    const percentage = item.percentage || 0;
+                    
+                    let episodeBadgeHtml = '';
+                    if (item.type === 'shows' && item.episodeTitle) {
+                        episodeBadgeHtml = `<div class="continue-episode-badge">${item.episodeTitle}</div>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="media-poster-box" style="aspect-ratio: 2/3; overflow: hidden; position: relative;">
+                            <img src="${item.poster}" alt="${item.title}" class="media-poster-img" style="width: 100%; height: 100%; object-fit: cover;">
+                            ${episodeBadgeHtml}
+                            <div class="continue-progress-bar-container">
+                                <div class="continue-progress-bar-fill" style="width: ${percentage}%;"></div>
+                            </div>
+                        </div>
+                        <div class="media-card-info" style="padding: 8px;">
+                            <span class="media-card-title" style="font-size: 0.75rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">${item.title}</span>
+                            <span class="media-card-year" style="font-size: 0.65rem; color: var(--text-secondary);">${item.year}</span>
+                        </div>
+                    `;
+                    row.appendChild(card);
+                });
+                
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+
+        function initPlayingItem() {
+            if (!selectedMedia) return;
+            currentPlayingItem = {
+                id: selectedMedia.id,
+                title: selectedMedia.title,
+                poster: selectedMedia.poster,
+                backdrop: selectedMedia.backdrop || selectedMedia.poster,
+                type: selectedMedia.type,
+                rating: selectedMedia.rating,
+                genre: selectedMedia.genre,
+                year: selectedMedia.year,
+                currentTime: 0,
+                duration: 0,
+                percentage: 0,
+                timestamp: Date.now()
+            };
+            if (selectedMedia.type === 'shows') {
+                const seasonEl = document.getElementById('season-picker');
+                const episodeEl = document.getElementById('episode-picker');
+                const season = seasonEl ? parseInt(seasonEl.value, 10) : 1;
+                const episode = episodeEl ? parseInt(episodeEl.value, 10) : 1;
+                currentPlayingItem.season = season;
+                currentPlayingItem.episode = episode;
+                currentPlayingItem.episodeTitle = `S${String(season).padStart(2, '0')}E${String(episode).padStart(2, '0')}`;
+            }
+        }
 
         // Scraper Task Simulator Mappings
         const scrapingResolvers = [
@@ -3589,6 +3881,7 @@
 
         // Render Media Catalog in Portal Grid (Support TMDB live fetch)
         async function renderCatalog(filterQuery = '') {
+            renderContinueWatching();
             const grid = document.getElementById('media-grid-shelf');
             let fetchedItems = null;
             
@@ -3879,6 +4172,7 @@
         // Open details Modal for Selected Media
         async function openDetailsModal(item) {
             selectedMedia = item;
+            detailsProgress = getContinueWatchingItem(item.id);
             document.getElementById('detail-poster').src = item.poster;
             document.getElementById('detail-title').innerText = item.title;
             document.getElementById('detail-rating').innerText = `★ ${item.rating}`;
@@ -3903,6 +4197,8 @@
             if (item.type === 'collections') {
                 if (detailsActions) detailsActions.style.display = 'none';
                 if (selectorContainer) selectorContainer.style.display = 'none';
+                const episodeGuideSection = document.getElementById('detail-episode-guide-section');
+                if (episodeGuideSection) episodeGuideSection.style.display = 'none';
                 document.getElementById('detail-cast-section').style.display = 'none';
                 document.getElementById('detail-similar-section').style.display = 'none';
                 
@@ -3925,11 +4221,19 @@
                 if (detailsActions) detailsActions.style.display = 'flex';
                 if (collectionSection) collectionSection.style.display = 'none';
                 
+                // Hide legacy dropdowns by default
+                if (selectorContainer) selectorContainer.style.display = 'none';
+
+                const primaryActionBtn = document.querySelector('#details-modal .btn-primary-action');
+                const episodeGuideSection = document.getElementById('detail-episode-guide-section');
+
                 if (item.type === 'shows') {
-                    selectorContainer.style.display = 'flex';
+                    if (primaryActionBtn) primaryActionBtn.style.display = 'none';
+                    if (episodeGuideSection) episodeGuideSection.style.display = 'flex';
                     await loadTvShowDetails(item);
                 } else {
-                    selectorContainer.style.display = 'none';
+                    if (primaryActionBtn) primaryActionBtn.style.display = 'flex';
+                    if (episodeGuideSection) episodeGuideSection.style.display = 'none';
                 }
 
                 document.getElementById('details-modal').style.display = 'block';
@@ -4069,6 +4373,81 @@
             }
         }
 
+        // TV Show Episode Guide: Season Tab Rendering Helpers
+        function renderSeasonTabs(seasons) {
+            const tabsContainer = document.getElementById('episode-guide-seasons-tabs');
+            if (!tabsContainer) return;
+            tabsContainer.innerHTML = '';
+            
+            const validSeasons = (seasons || []).filter(s => s.season_number > 0 || (s.season_number === 0 && s.episode_count > 0));
+            
+            if (validSeasons.length === 0) {
+                tabsContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 10px;">No seasons found.</div>';
+                return;
+            }
+            
+            const seasonPicker = document.getElementById('season-picker');
+            const activeSeason = seasonPicker ? seasonPicker.value : validSeasons[0].season_number;
+            
+            validSeasons.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = `filter-pill ${s.season_number.toString() === activeSeason.toString() ? 'active' : ''}`;
+                btn.style.margin = '0 5px 0 0';
+                btn.innerText = s.name || `Season ${s.season_number}`;
+                btn.onclick = () => selectSeasonTab(s.season_number);
+                tabsContainer.appendChild(btn);
+            });
+            
+            const activeSInfo = validSeasons.find(s => s.season_number.toString() === activeSeason.toString()) || validSeasons[0];
+            updateSeasonInfoCard(activeSInfo);
+        }
+
+        function updateSeasonInfoCard(s) {
+            if (!s) return;
+            const poster = document.getElementById('season-poster');
+            const title = document.getElementById('season-title');
+            const meta = document.getElementById('season-meta');
+            const overview = document.getElementById('season-overview');
+            
+            if (poster) {
+                const posterPath = s.poster_path ? `${TMDB_IMAGE_BASE}${s.poster_path}` : (selectedMedia ? selectedMedia.poster : '');
+                poster.src = posterPath;
+                poster.style.display = posterPath ? 'block' : 'none';
+            }
+            if (title) title.innerText = s.name || `Season ${s.season_number}`;
+            if (meta) {
+                const year = s.air_date ? s.air_date.substring(0, 4) : '';
+                meta.innerText = `${s.episode_count} Episodes ${year ? '• Premiered ' + year : ''}`;
+            }
+            if (overview) overview.innerText = s.overview || 'No season overview available.';
+        }
+
+        function selectSeasonTab(seasonNum) {
+            const seasonPicker = document.getElementById('season-picker');
+            if (seasonPicker) {
+                seasonPicker.value = seasonNum;
+            }
+            
+            const tabs = document.querySelectorAll('#episode-guide-seasons-tabs .filter-pill');
+            tabs.forEach(btn => {
+                const seasonLabel = btn.innerText;
+                const cachedS = currentSeasonsCached.find(s => s.season_number === seasonNum);
+                const expectedLabel = cachedS ? (cachedS.name || `Season ${cachedS.season_number}`) : `Season ${seasonNum}`;
+                if (seasonLabel === expectedLabel) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            const cachedS = currentSeasonsCached.find(s => s.season_number === seasonNum);
+            if (cachedS) {
+                updateSeasonInfoCard(cachedS);
+            }
+            
+            onSeasonChanged();
+        }
+
         async function loadTvShowDetails(item) {
             const tmdbId = getTMDBId(item);
             if (!tmdbId) return;
@@ -4098,6 +4477,17 @@
                     seasonPicker.innerHTML = '<option value="1">Season 1</option>';
                 }
 
+                // Auto-select season from detailsProgress if available
+                if (detailsProgress && detailsProgress.season) {
+                    const hasSeason = Array.from(seasonPicker.options).some(opt => opt.value === detailsProgress.season.toString());
+                    if (hasSeason) {
+                        seasonPicker.value = detailsProgress.season;
+                    }
+                }
+
+                currentSeasonsCached = data.seasons || [];
+                renderSeasonTabs(data.seasons);
+
                 await onSeasonChanged();
             } catch (err) {
                 console.error("Error loading TV show details:", err);
@@ -4118,12 +4508,24 @@
             if (!selectedSeason) return;
             episodePicker.innerHTML = '<option value="">Loading Episodes...</option>';
 
+            const listContainer = document.getElementById('episode-guide-list');
+            if (listContainer) {
+                listContainer.innerHTML = `
+                    <div style="padding: 20px; display: flex; align-items: center; justify-content: center; width: 100%;">
+                        <i data-lucide="loader-2" class="animate-spin" style="width: 24px; height: 24px; color: var(--accent-cinema);"></i>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
             try {
                 const res = await fetch(`${TMDB_BASE_URL}/tv/${tmdbId}/season/${selectedSeason}?api_key=${TMDB_API_KEY}`);
                 if (!res.ok) throw new Error("Failed to load season episodes");
                 const data = await res.json();
 
                 episodePicker.innerHTML = '';
+                if (listContainer) listContainer.innerHTML = '';
+
                 if (data.episodes && data.episodes.length > 0) {
                     data.episodes.forEach(ep => {
                         const opt = document.createElement('option');
@@ -4131,7 +4533,36 @@
                         const epName = ep.name ? ` - ${ep.name}` : '';
                         opt.innerText = `Ep ${ep.episode_number}${epName}`;
                         episodePicker.appendChild(opt);
+
+                        if (listContainer) {
+                            const stillUrl = ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : (selectedMedia.backdrop || selectedMedia.poster || '');
+                            
+                            const card = document.createElement('div');
+                            card.className = 'episode-row-card';
+                            card.dataset.episode = ep.episode_number;
+                            card.onclick = () => playEpisode(selectedSeason, ep.episode_number);
+                            
+                            const formattedAirDate = ep.air_date ? ep.air_date : 'Unknown Air Date';
+                            const overviewText = ep.overview ? ep.overview : 'No description available for this episode.';
+                            const epTitle = ep.name ? ep.name : `Episode ${ep.episode_number}`;
+                            
+                            card.innerHTML = `
+                                <img src="${stillUrl}" alt="Episode Still" class="episode-still">
+                                <div class="episode-info">
+                                    <div class="episode-header">
+                                        <span class="episode-number-title">S${selectedSeason}E${ep.episode_number} - ${epTitle}</span>
+                                        <span class="episode-airdate">${formattedAirDate}</span>
+                                    </div>
+                                    <p class="episode-overview">${overviewText}</p>
+                                </div>
+                                <div class="btn-play-episode">
+                                    <i data-lucide="play" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                                </div>
+                            `;
+                            listContainer.appendChild(card);
+                        }
                     });
+                    lucide.createIcons();
                 } else {
                     const selectedOpt = seasonPicker.options[seasonPicker.selectedIndex];
                     const epCount = parseInt(selectedOpt?.dataset?.episodeCount || 10, 10);
@@ -4140,12 +4571,71 @@
                         opt.value = i;
                         opt.innerText = `Episode ${i}`;
                         episodePicker.appendChild(opt);
+
+                        if (listContainer) {
+                            const stillUrl = selectedMedia.backdrop || selectedMedia.poster || '';
+                            const card = document.createElement('div');
+                            card.className = 'episode-row-card';
+                            card.dataset.episode = i;
+                            card.onclick = () => playEpisode(selectedSeason, i);
+                            card.innerHTML = `
+                                <img src="${stillUrl}" alt="Episode Still" class="episode-still">
+                                <div class="episode-info">
+                                    <div class="episode-header">
+                                        <span class="episode-number-title">S${selectedSeason}E${i} - Episode ${i}</span>
+                                        <span class="episode-airdate">Unknown Air Date</span>
+                                    </div>
+                                    <p class="episode-overview">No description available for this episode.</p>
+                                </div>
+                                <div class="btn-play-episode">
+                                    <i data-lucide="play" style="width: 16px; height: 16px; fill: currentColor;"></i>
+                                </div>
+                            `;
+                            listContainer.appendChild(card);
+                        }
+                    }
+                    lucide.createIcons();
+                }
+
+                // Auto-select episode from detailsProgress if season matches
+                let preSelectedEp = null;
+                if (detailsProgress && detailsProgress.season && detailsProgress.season.toString() === selectedSeason.toString() && detailsProgress.episode) {
+                    const hasEpisode = Array.from(episodePicker.options).some(opt => opt.value === detailsProgress.episode.toString());
+                    if (hasEpisode) {
+                        episodePicker.value = detailsProgress.episode;
+                        preSelectedEp = detailsProgress.episode;
+                    }
+                }
+
+                // Scroll/focus the pre-selected episode card
+                if (preSelectedEp && listContainer) {
+                    const matchedCard = listContainer.querySelector(`.episode-row-card[data-episode="${preSelectedEp}"]`);
+                    if (matchedCard) {
+                        document.querySelectorAll('.focused-tv').forEach(el => el.classList.remove('focused-tv'));
+                        matchedCard.classList.add('focused-tv');
+                        setTimeout(() => {
+                            matchedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            if (typeof setFocus === 'function') {
+                                setFocus(matchedCard);
+                            }
+                        }, 250);
                     }
                 }
             } catch (err) {
                 console.error("Error loading season episodes:", err);
                 episodePicker.innerHTML = '<option value="1">Episode 1</option>';
+                if (listContainer) {
+                    listContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 10px;">Failed to load episodes.</div>';
+                }
             }
+        }
+
+        function playEpisode(seasonNum, episodeNum) {
+            const seasonPicker = document.getElementById('season-picker');
+            const episodePicker = document.getElementById('episode-picker');
+            if (seasonPicker) seasonPicker.value = seasonNum;
+            if (episodePicker) episodePicker.value = episodeNum;
+            openScraperOverlay();
         }
 
         function closeDetailsModal() {
@@ -4983,6 +5473,12 @@
                 return;
             }
             
+            // Save Continue Watching progress for external player (placeholder 0% watched)
+            initPlayingItem();
+            if (currentPlayingItem) {
+                saveContinueWatching(currentPlayingItem);
+            }
+            
             // Use native bridge if available (preferred — proper Android Intents)
             if (hasNativeBridge()) {
                 showNotification(`Launching ${playerType === 'mx' ? 'MX Player' : playerType === 'vlc' ? 'VLC' : playerType === 'just' ? 'Just Player' : 'external player'}...`);
@@ -5050,6 +5546,8 @@
         function playInBuiltinPlayer(linkData) {
             if (!selectedMedia) return;
             
+            initPlayingItem();
+            
             document.getElementById('player-title-label').innerText = selectedMedia.title;
             document.getElementById('player-subtitle-label').innerText = `${linkData.provider} (${linkData.resolution}) • play-source: ${linkData.url}`;
             
@@ -5071,6 +5569,26 @@
             video.addEventListener('timeupdate', updateVideoProgress);
             video.addEventListener('loadedmetadata', () => {
                 document.getElementById('video-duration').innerText = formatTime(video.duration);
+                if (currentPlayingItem) {
+                    const savedProgress = getContinueWatchingItem(currentPlayingItem.id);
+                    if (savedProgress && savedProgress.currentTime > 0) {
+                        if (currentPlayingItem.type === 'shows') {
+                            if (savedProgress.season === currentPlayingItem.season && savedProgress.episode === currentPlayingItem.episode) {
+                                video.currentTime = savedProgress.currentTime;
+                            }
+                        } else {
+                            video.currentTime = savedProgress.currentTime;
+                        }
+                    }
+                }
+            });
+            
+            video.addEventListener('ended', () => {
+                if (currentPlayingItem) {
+                    removeContinueWatching(currentPlayingItem.id);
+                    currentPlayingItem = null;
+                }
+                closeVideoPlayer();
             });
 
             // Bind error event listener
@@ -5132,6 +5650,19 @@
         }
 
         function closeVideoPlayer() {
+            if (currentPlayingItem) {
+                const progress = (video.currentTime / video.duration) * 100;
+                if (!isNaN(progress) && progress > 90) {
+                    removeContinueWatching(currentPlayingItem.id);
+                } else {
+                    currentPlayingItem.currentTime = video.currentTime;
+                    currentPlayingItem.duration = video.duration || 0;
+                    currentPlayingItem.percentage = isNaN(progress) ? 0 : progress;
+                    currentPlayingItem.timestamp = Date.now();
+                    saveContinueWatching(currentPlayingItem);
+                }
+                currentPlayingItem = null;
+            }
             video.pause();
             activeStreamUrl = '';
             if (controlsTimeout) clearTimeout(controlsTimeout);
@@ -5215,6 +5746,17 @@
             slider.value = isNaN(progress) ? 0 : progress;
             
             curTimeLabel.innerText = formatTime(video.currentTime);
+
+            // Throttle Continue Watching progress updates to local storage (every 3 seconds)
+            const now = Date.now();
+            if (currentPlayingItem && (!currentPlayingItem.lastSaved || now - currentPlayingItem.lastSaved > 3000)) {
+                currentPlayingItem.currentTime = video.currentTime;
+                currentPlayingItem.duration = video.duration || 0;
+                currentPlayingItem.percentage = isNaN(progress) ? 0 : progress;
+                currentPlayingItem.timestamp = now;
+                currentPlayingItem.lastSaved = now;
+                saveContinueWatching(currentPlayingItem);
+            }
 
             // Subtitle CC Display Updater
             const overlay = document.getElementById('player-subtitles-overlay');
@@ -5975,7 +6517,7 @@
 
             // 5. Directional Spatial Navigation 
             function navigate(direction) {
-                const focusableSelector = '.menu-item, .filter-pill, .genre-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, select, input, button, a';
+                const focusableSelector = '.menu-item, .filter-pill, .genre-pill, .media-card, .continue-watching-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, .episode-row-card, select, input, button, a';
                 const activeContainer = getActiveFocusContainer();
                 
                 const allVisible = Array.from(activeContainer.querySelectorAll(focusableSelector)).filter(el => {
@@ -6194,7 +6736,7 @@
 
             // 8. Sync focus state when pointer/mouse hovers
             document.addEventListener('mouseover', function(e) {
-                const focusableSelector = '.menu-item, .filter-pill, .media-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, select, input, button, a';
+                const focusableSelector = '.menu-item, .filter-pill, .media-card, .continue-watching-card, .livetv-channel-card, #cinema-search-input, #livetv-search-input, .btn-search-action, #btn-load-more, .btn-modal-close, .btn-primary-action, .action-btn, .source-item, .switch, .btn-player-option, .link-row, .btn-play-stream, .collection-movie-card, .similar-card-item, .episode-row-card, select, input, button, a';
                 const target = e.target.closest(focusableSelector);
                 if (target && !target.classList.contains('focused-tv')) {
                     document.querySelectorAll('.focused-tv').forEach(el => el.classList.remove('focused-tv'));
@@ -6210,8 +6752,16 @@
                 await originalOpenDetails(item);
                 setTimeout(() => {
                     const isCollection = item.type === 'collections';
-                    const btnPrimary = document.querySelector('#details-modal .btn-primary-action');
-                    const firstFocus = (!isCollection && btnPrimary) ? btnPrimary : document.querySelector('#details-modal .btn-modal-close');
+                    const isShow = item.type === 'shows';
+                    let firstFocus = null;
+                    if (isShow) {
+                        firstFocus = document.querySelector('#episode-guide-seasons-tabs .filter-pill.active') ||
+                                     document.querySelector('#episode-guide-seasons-tabs .filter-pill');
+                    }
+                    if (!firstFocus) {
+                        const btnPrimary = document.querySelector('#details-modal .btn-primary-action');
+                        firstFocus = (!isCollection && btnPrimary && window.getComputedStyle(btnPrimary).display !== 'none') ? btnPrimary : document.querySelector('#details-modal .btn-modal-close');
+                    }
                     if (firstFocus) setFocus(firstFocus);
                 }, 200);
             };
@@ -6241,8 +6791,21 @@
             window.closeScraperOverlay = function() {
                 originalCloseScraper();
                 setTimeout(() => {
+                    if (selectedMedia && selectedMedia.type === 'shows') {
+                        const epVal = document.getElementById('episode-picker').value;
+                        const matchedCard = document.querySelector(`.episode-row-card[data-episode="${epVal}"]`);
+                        if (matchedCard) {
+                            setFocus(matchedCard);
+                            return;
+                        }
+                    }
                     const restoreButton = document.querySelector('#details-modal .btn-primary-action');
-                    if (restoreButton) setFocus(restoreButton);
+                    if (restoreButton && window.getComputedStyle(restoreButton).display !== 'none') {
+                        setFocus(restoreButton);
+                    } else {
+                        const closeBtn = document.querySelector('#details-modal .btn-modal-close');
+                        if (closeBtn) setFocus(closeBtn);
+                    }
                 }, 100);
             };
 

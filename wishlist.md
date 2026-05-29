@@ -24,7 +24,7 @@ This file tracks potential future features and improvements for **LeeStreamTV**.
 
 | # | Feature | Description | Priority | Effort |
 |---|---------|-------------|----------|--------|
-| 8 | **Continue Watching** | Remember where you left off in a movie or episode, and display a progress bar on the card | High | 🔴 |
+| 8 | **Continue Watching** | (Completed) Remember where you left off in a movie or episode, and display a progress bar on the card | High | 🔴 |
 | 9 | **Watched History Tab** | A dedicated history tab showing recently played titles with timestamps | Medium | 🟡 |
 | 10 | **"Mark as Watched"** | Allow marking individual titles on the watchlist as watched with a green checkmark badge | High | 🟢 |
 | 11 | **Watchlist Folders / Tags** | Organise watchlist into named groups (e.g. "Date Night", "Kids", "Anime") | Low | 🟡 |
@@ -39,7 +39,7 @@ This file tracks potential future features and improvements for **LeeStreamTV**.
 |---|---------|-------------|----------|--------|
 | 14 | **Watch Trailer** | (Completed) Embed a YouTube trailer button in the movie detail panel using TMDB's video endpoint | High | 🟡 |
 | 15 | **Cast & Crew Section** | Show the top cast list with headshots and character names inside the detail modal | Medium | 🟡 |
-| 16 | **Episode Guide for TV Shows** | Full season/episode browser with air dates, episode synopses, and season artwork | High | 🔴 |
+| 16 | **Episode Guide for TV Shows** | (Completed) Full season/episode browser with air dates, episode synopses, and season artwork | High | 🔴 |
 | 17 | **Similar Titles Row** | Horizontal scroll row of TMDB-recommended similar titles at the bottom of the details panel (already scaffolded!) | High | 🟢 |
 | 18 | **TMDB User Reviews** | Show top community reviews from TMDB's review endpoint inside the details panel | Low | 🟡 |
 | 19 | **Where to Watch (Legitimately)** | Show official streaming provider availability badges (Netflix, Prime etc.) inside the detail panel | Medium | 🟡 |
