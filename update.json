@@ -1,6 +1,6 @@
 {
-  "versionCode": 12,
-  "versionName": "1.5.7",
-  "changelog": "Fixed vertical scrolling and D-pad remote navigation inside the Movie Collections details modal.",
-  "apkUrl": "https://github.com/leroyharding/lee-stream-tv/releases/download/v1.5.7/LeeStreamTV_v1.5.7.apk"
+  "versionCode": 13,
+  "versionName": "1.1.0",
+  "changelog": "Integrated real TMDb poster images in place of emojis for Hydra Collections curated list items.",
+  "apkUrl": "https://github.com/leroyharding/Lee-stream-tvpro/releases/download/v1.1.0/LeeStreamTV_v1.1.0.apk"
 }
