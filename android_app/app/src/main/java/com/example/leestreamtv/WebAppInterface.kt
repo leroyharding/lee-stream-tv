@@ -183,12 +183,8 @@ class WebAppInterface(private val mContext: Context) {
 
     @JavascriptInterface
     fun openYoutubeTrailer(videoId: String) {
-        val intentApp = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoId")).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        val intentWeb = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=$videoId")).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        val intentApp = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoId"))
+        val intentWeb = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=$videoId"))
         
         val activity = mContext as? android.app.Activity
         try {

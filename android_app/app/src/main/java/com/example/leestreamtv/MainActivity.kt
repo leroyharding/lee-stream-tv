@@ -64,8 +64,18 @@ class MainActivity : Activity() {
         webView.requestFocus()
     }
 
+    private var lastResumeTime: Long = 0
+
+    override fun onResume() {
+        super.onResume()
+        lastResumeTime = System.currentTimeMillis()
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - lastResumeTime < 500) {
+                return true
+            }
             webView.evaluateJavascript("javascript:if(typeof window.handleAndroidBackPress === 'function') { window.handleAndroidBackPress(); } else { false; }") { result ->
                 if (result == "false" || result == "null") {
                     runOnUiThread {
