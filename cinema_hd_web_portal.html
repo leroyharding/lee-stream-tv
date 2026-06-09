@@ -692,6 +692,32 @@
             transform: translateX(5px);
         }
 
+        .btn-copy-stream, .btn-download-stream {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+        }
+
+        .btn-copy-stream:hover, .btn-download-stream:hover {
+            color: var(--accent-cinema) !important;
+            background: rgba(255, 122, 0, 0.15);
+        }
+
+        .btn-copy-stream:focus, .btn-download-stream:focus {
+            outline: none;
+            color: var(--accent-cinema) !important;
+            background: rgba(255, 122, 0, 0.25);
+            box-shadow: 0 0 0 2px var(--accent-cinema-glow);
+        }
+
         .link-left {
             display: flex;
             align-items: center;
@@ -5353,14 +5379,14 @@
                        </button>`;
 
                 const copyIcon = lnk.url 
-                    ? `<button class="btn-copy-stream" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center;" title="Copy Stream Link" onclick="event.stopPropagation(); copyToClipboard('${lnk.url}')" onmouseover="this.style.color='var(--accent-cinema)'" onmouseout="this.style.color='var(--text-muted)'">
-                            <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                    ? `<button class="btn-copy-stream" title="Copy Stream Link" onclick="event.stopPropagation(); copyToClipboard('${lnk.url}')">
+                            <i data-lucide="copy" style="width: 24px; height: 24px;"></i>
                        </button>` 
                     : '';
 
                 const downloadIcon = lnk.url 
-                    ? `<button class="btn-download-stream" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center;" title="Download Stream" onclick="event.stopPropagation(); downloadStream('${lnk.url}', '${selectedMedia ? selectedMedia.title.replace(/[^a-zA-Z0-9]/g, '_') : 'video'}_${lnk.resolution.replace(/\s+/g, '_')}.mp4')" onmouseover="this.style.color='var(--accent-cinema)'" onmouseout="this.style.color='var(--text-muted)'">
-                            <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                    ? `<button class="btn-download-stream" title="Download Stream" onclick="event.stopPropagation(); downloadStream('${lnk.url}', '${selectedMedia ? selectedMedia.title.replace(/[^a-zA-Z0-9]/g, '_') : 'video'}_${lnk.resolution.replace(/\s+/g, '_')}.mp4')">
+                            <i data-lucide="download" style="width: 24px; height: 24px;"></i>
                        </button>` 
                     : '';
 
