@@ -5558,30 +5558,47 @@
                 return;
             }
             
-            // Save Continue Watching progress for external player (placeholder 0% watched)
+            // Save Continue Watching progress for external player
             initPlayingItem();
             if (currentPlayingItem) {
                 saveContinueWatching(currentPlayingItem);
             }
             
+            // Calculate resume position in milliseconds from saved progress
+            let resumePositionMs = 0;
+            if (selectedMedia) {
+                const savedProgress = getContinueWatchingItem(selectedMedia.id);
+                if (savedProgress && savedProgress.currentTime > 0) {
+                    // For shows, only resume if same season/episode
+                    if (selectedMedia.type === 'shows') {
+                        if (currentPlayingItem && savedProgress.season === currentPlayingItem.season && savedProgress.episode === currentPlayingItem.episode) {
+                            resumePositionMs = Math.floor(savedProgress.currentTime * 1000);
+                        }
+                    } else {
+                        resumePositionMs = Math.floor(savedProgress.currentTime * 1000);
+                    }
+                }
+            }
+            
             // Use native bridge if available (preferred — proper Android Intents)
             if (hasNativeBridge()) {
-                showNotification(`Launching ${playerType === 'mx' ? 'MX Player' : playerType === 'vlc' ? 'VLC' : playerType === 'just' ? 'Just Player' : 'external player'}...`);
+                const resumeText = resumePositionMs > 0 ? ` (resuming at ${formatTime(resumePositionMs / 1000)})` : '';
+                showNotification(`Launching ${playerType === 'mx' ? 'MX Player' : playerType === 'vlc' ? 'VLC' : playerType === 'just' ? 'Just Player' : 'external player'}...${resumeText}`);
                 
                 const bridge = window.LeeStreamTVBridge || window.LeePrimeBridge;
                 switch (playerType) {
                     case 'mx':
-                        bridge.playInMXPlayer(url, title);
+                        bridge.playInMXPlayer(url, title, resumePositionMs);
                         break;
                     case 'vlc':
-                        bridge.playInVLC(url, title);
+                        bridge.playInVLC(url, title, resumePositionMs);
                         break;
                     case 'just':
-                        bridge.playInJustPlayer(url, title);
+                        bridge.playInJustPlayer(url, title, resumePositionMs);
                         break;
                     case 'default':
                     default:
-                        bridge.playInDefaultPlayer(url, title);
+                        bridge.playInDefaultPlayer(url, title, resumePositionMs);
                         break;
                 }
                 return;
@@ -5615,6 +5632,29 @@
                 showNotification("Failed to launch external player. Try 'Built-in Player' instead.");
             }
         }
+
+        // Called by Android native bridge when user exits an external player
+        // Receives the last playback position and total duration (in seconds)
+        window.onExternalPlayerResult = function(positionSec, durationSec) {
+            if (!currentPlayingItem) return;
+            
+            const progress = durationSec > 0 ? (positionSec / durationSec) * 100 : 0;
+            
+            if (!isNaN(progress) && progress > 90) {
+                // Watched past 90% — mark as completed
+                removeContinueWatching(currentPlayingItem.id);
+                showNotification('Marked as watched ✓');
+            } else if (positionSec > 0) {
+                currentPlayingItem.currentTime = positionSec;
+                currentPlayingItem.duration = durationSec || currentPlayingItem.duration || 0;
+                currentPlayingItem.percentage = isNaN(progress) ? 0 : progress;
+                currentPlayingItem.timestamp = Date.now();
+                saveContinueWatching(currentPlayingItem);
+                showNotification(`Progress saved at ${formatTime(positionSec)}`);
+            }
+            
+            currentPlayingItem = null;
+        };
 
         function setPreferredPlayerSetting(value) {
             if (value === 'ask') {

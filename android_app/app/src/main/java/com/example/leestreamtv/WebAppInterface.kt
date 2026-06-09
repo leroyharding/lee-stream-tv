@@ -1,5 +1,6 @@
 package com.example.leestreamtv
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +9,10 @@ import android.widget.Toast
 
 class WebAppInterface(private val mContext: Context) {
 
+    companion object {
+        const val REQUEST_CODE_EXTERNAL_PLAYER = 1001
+    }
+
     @JavascriptInterface
     fun isAvailable(): Boolean {
         return true
@@ -15,51 +20,58 @@ class WebAppInterface(private val mContext: Context) {
 
     @JavascriptInterface
     fun playInMXPlayer(url: String, title: String) {
+        playInMXPlayer(url, title, 0)
+    }
+
+    @JavascriptInterface
+    fun playInMXPlayer(url: String, title: String, positionMs: Int) {
         val packages = listOf("com.mxtech.videoplayer.ad", "com.mxtech.videoplayer.pro")
-        launchExternalPlayer(url, title, packages, "MX Player")
+        launchExternalPlayer(url, title, packages, "MX Player", positionMs.toLong())
     }
 
     @JavascriptInterface
     fun playInVLC(url: String, title: String) {
-        launchExternalPlayer(url, title, listOf("org.videolan.vlc"), "VLC Player")
+        playInVLC(url, title, 0)
+    }
+
+    @JavascriptInterface
+    fun playInVLC(url: String, title: String, positionMs: Int) {
+        launchExternalPlayer(url, title, listOf("org.videolan.vlc"), "VLC Player", positionMs.toLong())
     }
 
     @JavascriptInterface
     fun playInJustPlayer(url: String, title: String) {
-        launchExternalPlayer(url, title, listOf("com.brouken.player"), "Just Player")
+        playInJustPlayer(url, title, 0)
+    }
+
+    @JavascriptInterface
+    fun playInJustPlayer(url: String, title: String, positionMs: Int) {
+        launchExternalPlayer(url, title, listOf("com.brouken.player"), "Just Player", positionMs.toLong())
     }
 
     @JavascriptInterface
     fun playInDefaultPlayer(url: String, title: String) {
-        launchExternalPlayer(url, title, emptyList(), "Default Player")
+        playInDefaultPlayer(url, title, 0)
     }
 
-    private fun launchExternalPlayer(url: String, title: String, packages: List<String>, displayName: String) {
+    @JavascriptInterface
+    fun playInDefaultPlayer(url: String, title: String, positionMs: Int) {
+        launchExternalPlayer(url, title, emptyList(), "Default Player", positionMs.toLong())
+    }
+
+    private fun launchExternalPlayer(url: String, title: String, packages: List<String>, displayName: String, positionMs: Long = 0) {
         var launched = false
         val sanitizedUrl = sanitizeUrl(url)
-        
+        val activity = mContext as? Activity
+
         for (pkg in packages) {
             try {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    setDataAndType(Uri.parse(sanitizedUrl), "video/*")
-                    if (pkg.isNotEmpty()) {
-                        setPackage(pkg)
-                    }
-                    putExtra("title", title)
-                    putExtra("displayName", title)
-                    
-                    // Inject standard browser headers to bypass hotlinking protection
-                    val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                    putExtra("headers", arrayOf("User-Agent: $userAgent")) // VLC format
-                    putExtra("headers", arrayOf("User-Agent", userAgent)) // MX Player format
-                    val headersBundle = android.os.Bundle().apply {
-                        putString("User-Agent", userAgent)
-                    }
-                    putExtra("extra_headers", headersBundle) // Bundle format
-                    
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                val intent = createPlayerIntent(sanitizedUrl, title, pkg, positionMs)
+                if (activity != null) {
+                    activity.startActivityForResult(intent, REQUEST_CODE_EXTERNAL_PLAYER)
+                } else {
+                    mContext.startActivity(intent)
                 }
-                mContext.startActivity(intent)
                 launched = true
                 break
             } catch (e: Exception) {
@@ -71,46 +83,55 @@ class WebAppInterface(private val mContext: Context) {
             if (packages.isNotEmpty()) {
                 try {
                     Toast.makeText(mContext, "$displayName not installed. Attempting default player...", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(Uri.parse(sanitizedUrl), "video/*")
-                        putExtra("title", title)
-                        
-                        // Inject headers for fallback players too
-                        val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                        putExtra("headers", arrayOf("User-Agent: $userAgent"))
-                        putExtra("headers", arrayOf("User-Agent", userAgent))
-                        val headersBundle = android.os.Bundle().apply {
-                            putString("User-Agent", userAgent)
-                        }
-                        putExtra("extra_headers", headersBundle)
-                        
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val intent = createPlayerIntent(sanitizedUrl, title, "", positionMs)
+                    if (activity != null) {
+                        activity.startActivityForResult(intent, REQUEST_CODE_EXTERNAL_PLAYER)
+                    } else {
+                        mContext.startActivity(intent)
                     }
-                    mContext.startActivity(intent)
                 } catch (e: Exception) {
                     Toast.makeText(mContext, "No player could be launched: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             } else {
                 try {
-                    val intent = Intent(Intent.ACTION_VIEW).apply {
-                        setDataAndType(Uri.parse(sanitizedUrl), "video/*")
-                        putExtra("title", title)
-                        
-                        val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                        putExtra("headers", arrayOf("User-Agent: $userAgent"))
-                        putExtra("headers", arrayOf("User-Agent", userAgent))
-                        val headersBundle = android.os.Bundle().apply {
-                            putString("User-Agent", userAgent)
-                        }
-                        putExtra("extra_headers", headersBundle)
-                        
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val intent = createPlayerIntent(sanitizedUrl, title, "", positionMs)
+                    if (activity != null) {
+                        activity.startActivityForResult(intent, REQUEST_CODE_EXTERNAL_PLAYER)
+                    } else {
+                        mContext.startActivity(intent)
                     }
-                    mContext.startActivity(intent)
                 } catch (e: Exception) {
                     Toast.makeText(mContext, "No player could be launched: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+
+    private fun createPlayerIntent(url: String, title: String, pkg: String, positionMs: Long): Intent {
+        return Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(Uri.parse(url), "video/*")
+            if (pkg.isNotEmpty()) {
+                setPackage(pkg)
+            }
+            putExtra("title", title)
+            putExtra("displayName", title)
+
+            // Pass resume position to external players (milliseconds)
+            if (positionMs > 0) {
+                putExtra("position", positionMs.toInt())       // MX Player & Just Player (Int ms)
+                putExtra("from_start", false)                   // VLC: don't start from beginning
+            }
+
+            // Inject standard browser headers to bypass hotlinking protection
+            val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            putExtra("headers", arrayOf("User-Agent: $userAgent")) // VLC format
+            putExtra("headers", arrayOf("User-Agent", userAgent)) // MX Player format
+            val headersBundle = android.os.Bundle().apply {
+                putString("User-Agent", userAgent)
+            }
+            putExtra("extra_headers", headersBundle) // Bundle format
+
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
 

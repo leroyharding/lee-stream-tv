@@ -2,6 +2,7 @@ package com.example.leestreamtv
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -69,6 +70,46 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         lastResumeTime = System.currentTimeMillis()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == WebAppInterface.REQUEST_CODE_EXTERNAL_PLAYER) {
+            // Try to extract the playback position from the external player's result
+            var positionMs: Long = -1
+            var durationMs: Long = -1
+
+            if (data != null) {
+                // MX Player returns: position (int ms), duration (int ms), end_by (String)
+                if (data.hasExtra("position")) {
+                    positionMs = data.getIntExtra("position", -1).toLong()
+                }
+                if (data.hasExtra("duration")) {
+                    durationMs = data.getIntExtra("duration", -1).toLong()
+                }
+
+                // VLC returns: extra_position (long ms), extra_duration (long ms)
+                if (data.hasExtra("extra_position")) {
+                    positionMs = data.getLongExtra("extra_position", -1)
+                }
+                if (data.hasExtra("extra_duration")) {
+                    durationMs = data.getLongExtra("extra_duration", -1)
+                }
+            }
+
+            if (positionMs > 0) {
+                // Convert ms to seconds for the JavaScript side
+                val positionSec = positionMs / 1000.0
+                val durationSec = if (durationMs > 0) durationMs / 1000.0 else 0.0
+
+                webView.evaluateJavascript(
+                    "javascript:if(typeof window.onExternalPlayerResult === 'function') { window.onExternalPlayerResult($positionSec, $durationSec); }",
+                    null
+                )
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
