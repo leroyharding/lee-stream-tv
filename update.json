@@ -1,6 +1,6 @@
 {
-  "versionCode": 15,
-  "versionName": "1.6.1",
-  "changelog": "Added interactive Episode Guide for TV Shows with season tabs, still thumbnails, air dates, synopses, and spatial D-pad navigation support.",
+  "versionCode": 16,
+  "versionName": "1.6.2",
+  "changelog": "Added stream download capability directly from the resolved sources list and built-in video player controls, and fixed Continue Watching item scraping error.",
   "apkUrl": "https://github.com/leroyharding/lee-stream-tv/raw/main/LeeStreamTV.apk"
 }

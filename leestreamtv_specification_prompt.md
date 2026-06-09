@@ -9,7 +9,7 @@ You can copy and paste the contents of this document as a system prompt or a det
 ```text
 You are an expert developer specializing in Android Native Development (Kotlin), Hybrid Web architectures, and Media Streaming. 
 
-Your task is to build or extend a hybrid streaming media application named LeeStreamTV. The application consists of two main parts:
+Your task is to build or extend a hybrid streaming media application named StreamTV. The application consists of two main parts:
 1. A fullscreen, D-pad nav-friendly, glassmorphic Single Page Web App (HTML5 + CSS3 + JS) that aggregates movie/show metadata, manages settings, scrapes streaming links in parallel, parses audio capabilities, and handles IPTV playlists.
 2. A native Android wrapper (Kotlin Activity with fullscreen WebView) that exposes JavaScript Interfaces to bridge local operations (external player launching, APK updates, YouTube integration, and system back-button handlers).
 
@@ -159,17 +159,3 @@ putExtra("extra_headers", bundle)
 - **D-Pad Engine**: Implement visual focus highlights (typically orange shadows and scale shifts `.scale(1.05)`) on all key grid items. Use remote D-pad click listener simulation when navigating.
 - **Auto-scroll focus target**: When moving between horizontal movie shelves, the viewport should center the currently focused card to prevent off-screen focus elements.
 - **Backpress Hook**: Inside `window.handleAndroidBackPress()`, if a modal (like details, scraper, settings, or player) is open, close the modal first and return `true` to notify the Android wrapper that the event was handled. Only return `false` if the user is on the main catalog screen.
-
----
-
-### 8. Continue Watching & TV Show Episode Guide
-* **Continue Watching System**:
-  - Stores progress status in LocalStorage under the key `'leestreamtv_continue_watching'` (keeps up to 20 most recent titles).
-  - Displays glassmorphic progress cards (`.continue-watching-card`) with absolute-positioned progress bars (`.continue-progress-bar-container`, `.continue-progress-bar-fill`) and dynamic TV show episode indicators (`.continue-episode-badge`).
-  - Automatically restores playback position in the player (built-in or external) and pre-selects the saved season/episode on details modal load.
-* **Episode Guide Interface**:
-  - Displays season navigation tabs row (`#episode-guide-seasons-tabs`) and detailed season info panel (`#season-info-panel`) with season posters (`.poster_path` falling back to show's poster), names, overview synopses, and premiered years.
-  - Dynamic episode row list cards (`.episode-row-card`) rendering episode still thumbnails (`https://image.tmdb.org/t/p/w500{still_path}` falling back to show's backdrop/poster), S{season}E{episode} titles, air dates, and individual synopses.
-  - Hidden background inputs: Interacting with the graphical episode guide updates the hidden legacy picker dropdown elements (`#season-picker` and `#episode-picker`) to preserve parallel link scraper compatibility, immediately launching the scraper overlay.
-  - Visual display overrides: Hides the legacy `#tv-season-episode-selector` dropdown container and the generic "Find Stream Links" primary button when displaying TV shows.
-  - D-pad Spatial Navigation: Includes `.episode-row-card` in focusable elements list. Overrides `openDetailsModal` focus intercept hook to focus the active season tab first, and `closeScraperOverlay` focus restore hook to return D-pad focus to the playing episode card instead of a generic button.

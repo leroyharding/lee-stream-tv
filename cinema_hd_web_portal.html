@@ -1713,7 +1713,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.1</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.2</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -2465,6 +2465,10 @@
                                         <button class="btn-player-control" onclick="toggleFullscreen()">
                                             <i data-lucide="maximize" style="width: 20px; height: 20px;"></i>
                                         </button>
+                                        <button class="btn-player-control" onclick="downloadCurrentStream()" title="Download current stream" style="background: rgba(62, 207, 142, 0.15); border: 1px solid rgba(62, 207, 142, 0.35); color: var(--accent-premium); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(62, 207, 142, 0.25)'" onmouseout="this.style.background='rgba(62, 207, 142, 0.15)'">
+                                            <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                                            <span>Download</span>
+                                        </button>
                                         <button class="btn-player-control" onclick="playInExternalPlayer()" title="Open in external player (MX Player, VLC, etc.)" style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.35); color: #facc15; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(234, 179, 8, 0.25)'" onmouseout="this.style.background='rgba(234, 179, 8, 0.15)'">
                                             <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
                                             <span>External Player</span>
@@ -2784,6 +2788,7 @@
 
         // Helper to retrieve live TMDb ID or map mock local IDs
         function getTMDBId(item) {
+            if (!item) return null;
             if (item.tmdbId) return item.tmdbId;
             const mockIds = {
                 'm1': 82856,
@@ -2793,7 +2798,16 @@
                 'm5': 157336,
                 'm6': 66732
             };
-            return mockIds[item.id] || null;
+            if (mockIds[item.id]) return mockIds[item.id];
+            
+            // Try to extract from string ID like 'movies_12345' or 'shows_12345'
+            if (item.id && typeof item.id === 'string') {
+                const parts = item.id.split('_');
+                if (parts.length > 1 && !isNaN(parts[parts.length - 1])) {
+                    return parseInt(parts[parts.length - 1], 10);
+                }
+            }
+            return null;
         }
 
         // Live cast member retrieval
@@ -3064,6 +3078,7 @@
             if (!selectedMedia) return;
             currentPlayingItem = {
                 id: selectedMedia.id,
+                tmdbId: selectedMedia.tmdbId || getTMDBId(selectedMedia),
                 title: selectedMedia.title,
                 poster: selectedMedia.poster,
                 backdrop: selectedMedia.backdrop || selectedMedia.poster,
@@ -3130,7 +3145,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 15; // Increment this with every release
+        const CURRENT_VERSION_CODE = 16; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3199,6 +3214,43 @@
         function downloadLatestAPK() {
             const url = window.latestApkUrl || "https://github.com/leroyharding/lee-stream-tv/releases/latest";
             window.open(url, '_blank');
+        }
+
+        function downloadStream(url, filename) {
+            if (!url) {
+                showNotification("Error: No stream URL available.");
+                return;
+            }
+            
+            const isM3u8 = url.toLowerCase().includes('.m3u8') || url.toLowerCase().includes('m3u8');
+            if (isM3u8) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification("HLS stream copied to clipboard! Use VLC/FFmpeg to download.");
+                }).catch(err => {
+                    showNotification("HLS stream cannot be downloaded directly in browser.");
+                });
+                return;
+            }
+
+            showNotification("Attempting download... If it opens in a new tab, right-click & 'Save Video As'.");
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'stream.mp4';
+            a.target = '_blank';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function downloadCurrentStream() {
+            if (!activeStreamUrl) {
+                showNotification("No active stream to download.");
+                return;
+            }
+            const filename = (selectedMedia ? selectedMedia.title.replace(/[^a-zA-Z0-9]/g, '_') : 'video') + '_download.mp4';
+            downloadStream(activeStreamUrl, filename);
         }
 
         // Initialize Lucide Icons & Catalog
@@ -5301,8 +5353,14 @@
                        </button>`;
 
                 const copyIcon = lnk.url 
-                    ? `<button class="btn-copy-stream" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.2s; display: flex; align-items: center;" title="Copy Stream Link" onclick="event.stopPropagation(); copyToClipboard('${lnk.url}')">
+                    ? `<button class="btn-copy-stream" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center;" title="Copy Stream Link" onclick="event.stopPropagation(); copyToClipboard('${lnk.url}')" onmouseover="this.style.color='var(--accent-cinema)'" onmouseout="this.style.color='var(--text-muted)'">
                             <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                       </button>` 
+                    : '';
+
+                const downloadIcon = lnk.url 
+                    ? `<button class="btn-download-stream" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center;" title="Download Stream" onclick="event.stopPropagation(); downloadStream('${lnk.url}', '${selectedMedia ? selectedMedia.title.replace(/[^a-zA-Z0-9]/g, '_') : 'video'}_${lnk.resolution.replace(/\s+/g, '_')}.mp4')" onmouseover="this.style.color='var(--accent-cinema)'" onmouseout="this.style.color='var(--text-muted)'">
+                            <i data-lucide="download" style="width: 16px; height: 16px;"></i>
                        </button>` 
                     : '';
 
@@ -5324,6 +5382,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 12px;">
                         ${copyIcon}
+                        ${downloadIcon}
                         ${actionButton}
                     </div>
                 `;
