@@ -1,6 +1,6 @@
 {
-  "versionCode": 16,
-  "versionName": "1.6.2",
-  "changelog": "Added stream download capability directly from the resolved sources list and built-in video player controls, and fixed Continue Watching item scraping error.",
+  "versionCode": 17,
+  "versionName": "1.6.3",
+  "changelog": "External players now remember your exact playback position. Enlarged copy/download buttons on stream links.",
   "apkUrl": "https://github.com/leroyharding/lee-stream-tv/raw/main/LeeStreamTV.apk"
 }
