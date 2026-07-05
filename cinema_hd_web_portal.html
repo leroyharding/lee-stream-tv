@@ -1785,7 +1785,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.7</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.8</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -3372,13 +3372,62 @@
             }
         }
         
-        function playDebridHistoryItem(filename, linkUrl) {
-            selectedMedia = { title: filename, backdrop_path: null, poster_path: null };
-            currentPlayingItem = null;
-            playInBuiltinPlayer({ url: linkUrl, provider: 'All-Debrid History', resolution: 'Direct' });
+        async function playDebridHistoryItem(filename, linkUrl) {
+            const adToken = localStorage.getItem('ad_access_token');
+            if (!adToken) {
+                showNotification("All-Debrid token missing.");
+                return;
+            }
+            
+            showNotification("Resolving stream link...");
+            try {
+                // Try to unlock the link to get a fresh streamable URL
+                const res = await fetch(`https://api.alldebrid.com/v4/link/unlock?agent=leestreamtv&apikey=${adToken}&link=${encodeURIComponent(linkUrl)}`);
+                const data = await res.json();
+                
+                let finalUrl = linkUrl;
+                if (data.status === 'success' && data.data && data.data.link) {
+                    finalUrl = data.data.link;
+                }
+                
+                selectedMedia = { id: 'ad_' + Date.now(), title: filename, backdrop_path: null, poster_path: null };
+                currentPlayingItem = null;
+                
+                // Route to preferred player
+                const prefPlayer = localStorage.getItem('leestreamtv_preferred_player') || 'builtin';
+                
+                if (prefPlayer === 'builtin') {
+                    playInBuiltinPlayer({ url: finalUrl, provider: 'All-Debrid', resolution: 'History' });
+                } else if (isAndroidDevice()) {
+                    // Send to external player via intent
+                    const cleanUrl = finalUrl.replace(/^https?:\/\//i, '');
+                    const scheme = finalUrl.startsWith('https') ? 'https' : 'http';
+                    let intentUrl = '';
+                    switch(prefPlayer) {
+                        case 'mx':
+                            intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(filename)};end`;
+                            break;
+                        case 'vlc':
+                            intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=org.videolan.vlc;S.title=${encodeURIComponent(filename)};end`;
+                            break;
+                        case 'just':
+                            intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=com.brouken.player;S.title=${encodeURIComponent(filename)};end`;
+                            break;
+                        default:
+                            intentUrl = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;S.title=${encodeURIComponent(filename)};end`;
+                            break;
+                    }
+                    window.location.href = intentUrl;
+                } else {
+                    playInBuiltinPlayer({ url: finalUrl, provider: 'All-Debrid', resolution: 'History' });
+                }
+            } catch (err) {
+                console.error("Failed to unlock AD link:", err);
+                showNotification("Failed to resolve Debrid link.");
+            }
         }
 
-        const CURRENT_VERSION_CODE = 21; // Increment this with every release
+        const CURRENT_VERSION_CODE = 22; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
