@@ -1,6 +1,6 @@
 {
-  "versionCode": 17,
-  "versionName": "1.6.3",
-  "changelog": "External players now remember your exact playback position. Enlarged copy/download buttons on stream links.",
+  "versionCode": 18,
+  "versionName": "1.6.4",
+  "changelog": "Added full All-Debrid integration alongside Real-Debrid.",
   "apkUrl": "https://github.com/leroyharding/lee-stream-tv/raw/main/LeeStreamTV.apk"
 }

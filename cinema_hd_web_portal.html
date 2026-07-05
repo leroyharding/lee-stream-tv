@@ -2018,6 +2018,17 @@
 
                                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.04);">
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span style="font-weight: 600; color: #fff; font-size: 0.95rem;">All-Debrid Sync</span>
+                                        <span style="font-size: 0.8rem; color: var(--text-muted);">Pair your All-Debrid account for fast cached torrent streaming</span>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="alldebrid-toggle" onchange="toggleAllDebrid()">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.04);">
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
                                         <span style="font-weight: 600; color: #fff; font-size: 0.95rem;">Auto-Select 4K</span>
                                         <span style="font-size: 0.8rem; color: var(--text-muted);">Automatically pick the best 4K source on resolve</span>
                                     </div>
@@ -2269,6 +2280,61 @@
                                     <span>Refresh Code</span>
                                 </button>
                                 <button class="btn-secondary-action" style="flex: 1; justify-content: center; height: 48px; border-radius: 12px;" onclick="enterRDTokenManually()">
+                                    <span>Enter Token</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ------------------ ALL-DEBRID SYNC MODAL ------------------ -->
+                    <div class="cinema-details-modal" id="alldebrid-modal" style="max-width: 520px; height: fit-content; margin: auto; border: 1px solid rgba(250, 190, 40, 0.25); box-shadow: 0 0 50px rgba(250, 190, 40, 0.1); top: 10%; border-radius: 16px;">
+                        <button class="btn-modal-close" onclick="closeAllDebridModal()">
+                            <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                        </button>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 24px; align-items: center; text-align: center; padding: 10px;">
+                            <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(250, 190, 40, 0.1); border: 1px solid rgba(250, 190, 40, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                                <i data-lucide="key" style="width: 32px; height: 32px; color: #fabe28;"></i>
+                            </div>
+                            
+                            <div>
+                                <h2 class="cinema-shelf-title" style="font-size: 1.8rem; color: #fff; margin-bottom: 8px;">All-Debrid Sync</h2>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 360px;">
+                                    Pair your device to resolve cached high-speed torrent streams instantly in your browser player.
+                                </p>
+                            </div>
+                            
+                            <!-- Auth Steps -->
+                            <div id="ad-auth-steps" style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
+                                <!-- Dynamically injected by JS -->
+                            </div>
+                            
+                            <!-- Slide-down input box for manual AD token entry -->
+                            <div id="ad-manual-panel" style="width: 100%; display: none; flex-direction: column; gap: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 16px; border-radius: 14px; text-align: left; transition: all 0.3s ease;">
+                                <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">All-Debrid API Key (Recommended)</label>
+                                <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0; line-height: 1.35;">
+                                    <strong>Why use this?</strong> Third-party resolvers (like Torrentio) run on remote servers and will often fail with OAuth device codes due to IP-locking policies. Paste your static API key below for stable playback.
+                                </p>
+                                <div style="display: flex; gap: 8px;">
+                                    <input type="password" id="ad-manual-token-input" placeholder="Paste your API key here..." style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 0.9rem; font-family: var(--font-mono); outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#fabe28'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                                    <button class="btn-primary-action" onclick="submitManualADToken()" style="background: #fabe28; height: auto; padding: 0 16px; border-radius: 8px; font-weight: 600; cursor: pointer; color: #000; border: none;">
+                                        <span>Verify</span>
+                                    </button>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                    <a href="https://alldebrid.com/apikeys" target="_blank" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 4px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">
+                                        Find API Key <i data-lucide="external-link" style="width: 10px; height: 10px;"></i>
+                                    </a>
+                                    <span id="ad-manual-status" style="font-size: 0.75rem; color: #f43f5e; font-weight: 500;"></span>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 12px; width: 100%; margin-top: 10px;">
+                                <button class="btn-primary-action" id="btn-ad-authorize" style="flex: 1; background: #fabe28; justify-content: center; height: 48px; color: #000;" onclick="startADDeviceFlow()">
+                                    <i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i>
+                                    <span>Refresh Code</span>
+                                </button>
+                                <button class="btn-secondary-action" style="flex: 1; justify-content: center; height: 48px; border-radius: 12px;" onclick="enterADTokenManually()">
                                     <span>Enter Token</span>
                                 </button>
                             </div>
@@ -3014,6 +3080,7 @@
             localStorage.removeItem('cinema_watchlist');
         }
         let isRealDebridEnabled = false;
+        let isAllDebridEnabled = false;
 
         // Continue Watching State & Helper Functions
         let continueWatching = JSON.parse(localStorage.getItem('leestreamtv_continue_watching')) || [];
@@ -3138,6 +3205,38 @@
             { id: 'uc0', label: 'RealDebrid Cache Resolver' }
         ];
 
+        async function verifyAndRefreshADStatus() {
+            const adToken = localStorage.getItem('ad_access_token');
+            if (!adToken) return;
+            
+            try {
+                const res = await fetchWithCORS(`https://api.alldebrid.com/v4/user?agent=leestreamtv&apikey=${adToken}`);
+                const data = await res.json();
+                
+                if (data.status === 'error') {
+                    localStorage.removeItem('ad_access_token');
+                    localStorage.removeItem('ad_username');
+                    localStorage.removeItem('ad_is_premium');
+                    isAllDebridEnabled = false;
+                    document.getElementById('alldebrid-toggle').checked = false;
+                    showNotification("All-Debrid session expired. Please re-authenticate.");
+                    return;
+                }
+                
+                if (data.status === 'success') {
+                    const userData = data.data.user;
+                    localStorage.setItem('ad_username', userData.username);
+                    localStorage.setItem('ad_is_premium', userData.isPremium ? 'true' : 'false');
+                    
+                    if (document.getElementById('alldebrid-modal').style.display === 'block') {
+                        showADAccessGranted(userData);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to auto-refresh All-Debrid account status:", err);
+            }
+        }
+
         async function verifyAndRefreshRDStatus() {
             const rdToken = localStorage.getItem('rd_access_token');
             if (!rdToken) return;
@@ -3171,7 +3270,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 17; // Increment this with every release
+        const CURRENT_VERSION_CODE = 18; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3307,6 +3406,14 @@
                 isRealDebridEnabled = true;
                 document.getElementById('debrid-toggle').checked = true;
                 verifyAndRefreshRDStatus();
+            }
+
+            const adToken = localStorage.getItem('ad_access_token');
+            if (adToken) {
+                isAllDebridEnabled = true;
+                const adToggle = document.getElementById('alldebrid-toggle');
+                if (adToggle) adToggle.checked = true;
+                verifyAndRefreshADStatus();
             }
 
             // Restore Auto-Play HdHub toggle state
@@ -3934,6 +4041,308 @@
             } catch (e) {
                 console.error("Manual Real-Debrid validation failed:", e);
                 statusEl.innerText = e.message || "Invalid Token or connection error";
+                statusEl.style.color = "#f43f5e";
+            }
+        }
+
+        // ------------------ ALL-DEBRID LOGIC ------------------
+        let adPollingInterval = null;
+        let adTimerInterval = null;
+
+        function toggleAllDebrid() {
+            const toggle = document.getElementById('alldebrid-toggle');
+            if (toggle.checked) {
+                openAllDebridModal();
+            } else {
+                disconnectAllDebrid();
+            }
+        }
+
+        function openAllDebridModal() {
+            const modal = document.getElementById('alldebrid-modal');
+            if (modal) {
+                modal.style.display = 'block';
+                const adToken = localStorage.getItem('ad_access_token');
+                
+                if (adToken) {
+                    // Try showing user cached data instantly, background refresh will correct it if expired
+                    const cachedUser = {
+                        username: localStorage.getItem('ad_username') || 'AD User',
+                        isPremium: localStorage.getItem('ad_is_premium') === 'true'
+                    };
+                    showADAccessGranted(cachedUser);
+                    verifyAndRefreshADStatus();
+                } else {
+                    startADDeviceFlow();
+                }
+            }
+        }
+
+        function closeAllDebridModal() {
+            const modal = document.getElementById('alldebrid-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                clearInterval(adTimerInterval);
+                clearInterval(adPollingInterval);
+            }
+            if (!localStorage.getItem('ad_access_token')) {
+                const toggle = document.getElementById('alldebrid-toggle');
+                if (toggle) toggle.checked = false;
+                isAllDebridEnabled = false;
+            }
+        }
+
+        async function startADDeviceFlow() {
+            const stepsEl = document.getElementById('ad-auth-steps');
+            if (stepsEl) {
+                stepsEl.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; width: 100%; position: relative;">
+                        <span style="position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700; background: rgba(250, 190, 40, 0.2); color: #fabe28; padding: 4px 8px; border-radius: 6px;">STEP 1</span>
+                        <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 8px;">Visit Authorization Portal</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">On your phone or computer, go to this exact URL:</p>
+                        <a href="https://alldebrid.com/pin" target="_blank" style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; color: #fabe28; font-family: var(--font-mono); font-size: 1.1rem; text-decoration: none; display: block; border: 1px solid rgba(250, 190, 40, 0.3); font-weight: 600;">alldebrid.com/pin</a>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; width: 100%; position: relative;">
+                        <span style="position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700; background: rgba(250, 190, 40, 0.2); color: #fabe28; padding: 4px 8px; border-radius: 6px;">STEP 2</span>
+                        <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 8px;">Enter Device Code</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 12px;">Type the code below into the authorization portal:</p>
+                        <div id="ad-device-code" style="background: rgba(250, 190, 40, 0.1); padding: 16px; border-radius: 12px; font-size: 2rem; font-weight: 800; color: #fabe28; letter-spacing: 4px; font-family: var(--font-mono); border: 2px dashed rgba(250, 190, 40, 0.3);">LOADING</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                            <span id="ad-status-indicator" style="font-size: 0.75rem; color: #3ecf8e; font-weight: 500; display: flex; align-items: center; gap: 6px;"><i data-lucide="loader-2" class="animate-spin" style="width: 12px; height: 12px;"></i> Generating code...</span>
+                            <span id="ad-timer" style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);">10:00</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const codeEl = document.getElementById('ad-device-code');
+            const statusEl = document.getElementById('ad-status-indicator');
+            const btn = document.getElementById('btn-ad-authorize');
+            
+            if (btn) {
+                btn.innerHTML = `<i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i><span>Refresh Code</span>`;
+                btn.onclick = startADDeviceFlow;
+            }
+            
+            if (codeEl) codeEl.innerText = "LOADING";
+            if (statusEl) statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 12px; height: 12px;"></i> Generating code...`;
+            lucide.createIcons();
+            
+            try {
+                // Perform real-time Device pairing flow for AllDebrid
+                const response = await fetchWithCORS('https://api.alldebrid.com/v4/pin/get?agent=leestreamtv');
+                const data = await response.json();
+                
+                if (data.status === 'error') {
+                    throw new Error(data.error.message || 'API Blocked');
+                }
+                
+                const pinData = data.data;
+                
+                if (codeEl) codeEl.innerText = pinData.pin;
+                if (statusEl) statusEl.innerText = "Pairing with All-Debrid...";
+                
+                startADTimer(pinData.expires_in || 600);
+                startADPolling(pinData.check, pinData.pin);
+            } catch (e) {
+                console.error("All-Debrid API access blocked:", e);
+                if (codeEl) codeEl.innerText = "-----";
+                if (statusEl) statusEl.innerHTML = `<span style="color: #f43f5e;">API Error: Connection failed. Please enter key manually.</span>`;
+                clearInterval(adTimerInterval);
+                clearInterval(adPollingInterval);
+            }
+        }
+
+        function startADTimer(expiresIn) {
+            clearInterval(adTimerInterval);
+            let timeRemaining = expiresIn || 600;
+            const timerEl = document.getElementById('ad-timer');
+            
+            adTimerInterval = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining <= 0) {
+                    clearInterval(adTimerInterval);
+                    clearInterval(adPollingInterval);
+                    timerEl.innerText = "EXPIRED";
+                    document.getElementById('ad-status-indicator').innerText = "Device code expired. Try again.";
+                } else {
+                    const mins = Math.floor(timeRemaining / 60);
+                    const secs = timeRemaining % 60;
+                    timerEl.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function startADPolling(checkCode, pinCode) {
+            clearInterval(adPollingInterval);
+            const statusEl = document.getElementById('ad-status-indicator');
+            
+            // Poll every 5 seconds
+            adPollingInterval = setInterval(async () => {
+                try {
+                    const res = await fetchWithCORS(`https://api.alldebrid.com/v4/pin/check?agent=leestreamtv&check=${checkCode}&pin=${pinCode}`);
+                    const data = await res.json();
+                    
+                    if (data.status === 'error') return; // Still waiting for approval
+                    
+                    const tokenData = data.data;
+                    if (!tokenData || !tokenData.apikey) return;
+                    
+                    clearInterval(adPollingInterval);
+                    clearInterval(adTimerInterval);
+                    
+                    statusEl.innerText = "Fetching user details...";
+                    verifyADToken(tokenData.apikey);
+                } catch (e) {
+                    console.error("AD polling exception:", e);
+                }
+            }, 5000);
+        }
+
+        async function verifyADToken(token) {
+            try {
+                const userRes = await fetchWithCORS(`https://api.alldebrid.com/v4/user?agent=leestreamtv&apikey=${token}`);
+                const data = await userRes.json();
+                
+                if (data.status === 'error') throw new Error('User fetch error');
+                const userData = data.data.user;
+                
+                localStorage.setItem('ad_access_token', token);
+                localStorage.setItem('ad_username', userData.username);
+                localStorage.setItem('ad_is_premium', userData.isPremium ? 'true' : 'false');
+                
+                isAllDebridEnabled = true;
+                showADAccessGranted(userData);
+            } catch (e) {
+                document.getElementById('ad-status-indicator').innerText = "Auth Error: " + e.message;
+            }
+        }
+
+        function disconnectAllDebrid() {
+            localStorage.removeItem('ad_access_token');
+            localStorage.removeItem('ad_username');
+            localStorage.removeItem('ad_is_premium');
+            isAllDebridEnabled = false;
+            
+            const toggle = document.getElementById('alldebrid-toggle');
+            if (toggle) toggle.checked = false;
+            
+            clearInterval(adPollingInterval);
+            clearInterval(adTimerInterval);
+            
+            showNotification("All-Debrid Disconnected");
+            
+            const stepsEl = document.getElementById('ad-auth-steps');
+            if (stepsEl) {
+                stepsEl.innerHTML = '';
+            }
+            
+            startADDeviceFlow();
+        }
+
+        function showADAccessGranted(userData) {
+            const username = userData.username || "User";
+            const isPremium = userData.isPremium;
+            
+            isAllDebridEnabled = true;
+            document.getElementById('alldebrid-toggle').checked = true;
+            
+            const stepsEl = document.getElementById('ad-auth-steps');
+            
+            if (isPremium) {
+                stepsEl.innerHTML = `
+                    <div style="background: rgba(62, 207, 142, 0.08); border: 1px solid rgba(62, 207, 142, 0.2); padding: 25px; border-radius: 16px; width: 100%; text-align: center;">
+                        <i data-lucide="check-circle-2" style="width: 48px; height: 48px; color: var(--accent-premium); margin: 0 auto 15px auto; display: block;"></i>
+                        <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px;">All-Debrid Synced!</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                            Connected Account: <strong>${username}</strong>
+                        </p>
+                        <span style="background: rgba(62, 207, 142, 0.15); color: var(--accent-premium); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">
+                            Premium Active
+                        </span>
+                        <div style="margin-top: 15px;">
+                            <button onclick="disconnectAllDebrid()" class="btn-secondary-action" style="padding: 6px 14px; border-radius: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2); color: #f43f5e; font-weight: 600; margin: auto;">
+                                <i data-lucide="log-out" style="width: 12px; height: 12px;"></i> Disconnect Account
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                stepsEl.innerHTML = `
+                    <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); padding: 25px; border-radius: 16px; width: 100%; text-align: center;">
+                        <i data-lucide="alert-triangle" style="width: 48px; height: 48px; color: #f43f5e; margin: 0 auto 15px auto; display: block;"></i>
+                        <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 8px;">Premium Expired</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.45;">
+                            Connected as <strong>${username}</strong>, but your subscription is inactive. All-Debrid streams require an active premium membership.
+                        </p>
+                        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                            <a href="https://alldebrid.com/pricing/" target="_blank" style="background: #f43f5e; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
+                                Purchase Premium <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                            </a>
+                            <button onclick="disconnectAllDebrid()" style="background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Disconnect
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+            
+            showNotification(`All-Debrid Synced: ${username}`);
+            
+            const btn = document.getElementById('btn-ad-authorize');
+            if (btn) {
+                btn.innerHTML = `<span>Close Panel</span>`;
+                btn.onclick = closeAllDebridModal;
+            }
+        }
+
+        function enterADTokenManually() {
+            const panel = document.getElementById('ad-manual-panel');
+            if (panel.style.display === 'none' || !panel.style.display) {
+                panel.style.display = 'flex';
+                document.getElementById('ad-manual-token-input').focus();
+            } else {
+                panel.style.display = 'none';
+            }
+        }
+
+        async function submitManualADToken() {
+            const tokenInput = document.getElementById('ad-manual-token-input');
+            const statusEl = document.getElementById('ad-manual-status');
+            const token = tokenInput.value ? tokenInput.value.trim() : '';
+            
+            if (!token) {
+                statusEl.innerText = "Please enter a valid key";
+                statusEl.style.color = "#f43f5e";
+                return;
+            }
+            
+            statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 10px; height: 10px; display: inline-block;"></i> Verifying...`;
+            statusEl.style.color = "var(--accent-premium)";
+            lucide.createIcons();
+            
+            try {
+                const res = await fetchWithCORS(`https://api.alldebrid.com/v4/user?agent=leestreamtv&apikey=${token}`);
+                const data = await res.json();
+                
+                if (data.status === 'error') {
+                    throw new Error(data.error.message || `Key rejected`);
+                }
+                
+                const userData = data.data.user;
+                
+                localStorage.setItem('ad_access_token', token);
+                localStorage.setItem('ad_username', userData.username);
+                localStorage.setItem('ad_is_premium', userData.isPremium ? 'true' : 'false');
+                
+                isAllDebridEnabled = true;
+                showADAccessGranted(userData);
+                
+                document.getElementById('ad-manual-panel').style.display = 'none';
+            } catch (e) {
+                console.error("Manual All-Debrid validation failed:", e);
+                statusEl.innerText = e.message || "Invalid Key or connection error";
                 statusEl.style.color = "#f43f5e";
             }
         }
@@ -4870,22 +5279,24 @@
             return null;
         }
 
-        function parseTorrentioStream(stream, isRD) {
+        function parseTorrentioStream(stream, isRD, isAD) {
+            const isPremium = isRD || isAD;
+            const premPrefix = isRD ? "RD" : (isAD ? "AD" : "");
             const name = stream.name || "";
             const title = stream.title || "";
             
             let resolution = "SD";
             if (name.includes("4K") || title.includes("2160p") || title.includes("4K")) {
-                resolution = isRD ? "4K PREMIUM" : "4K P2P";
+                resolution = isPremium ? "4K PREMIUM" : "4K P2P";
             } else if (name.includes("1080p") || title.includes("1080p")) {
-                resolution = isRD ? "1080p PREMIUM" : "1080p P2P";
+                resolution = isPremium ? "1080p PREMIUM" : "1080p P2P";
             } else if (name.includes("720p") || title.includes("720p")) {
-                resolution = isRD ? "720p PREMIUM" : "720p P2P";
-            } else if (isRD) {
-                resolution = "RD PREMIUM";
+                resolution = isPremium ? "720p PREMIUM" : "720p P2P";
+            } else if (isPremium) {
+                resolution = `${premPrefix} PREMIUM`;
             }
             
-            let type = isRD ? "rd" : "free";
+            let type = isPremium ? "rd" : "free";
             if (resolution.includes("4K")) type = "rd";
             else if (resolution.includes("1080p")) type = "hd";
 
@@ -5091,11 +5502,15 @@
 
             const rdToken = localStorage.getItem('rd_access_token');
             const hasRD = !!rdToken;
+            const adToken = localStorage.getItem('ad_access_token');
+            const hasAD = !!adToken;
 
             if (hasRD) {
                 addLog("Real-Debrid premium credential detected. Injecting API keys...", "success");
+            } else if (hasAD) {
+                addLog("All-Debrid premium credential detected. Injecting API keys...", "success");
             } else {
-                addLog("Warning: Real-Debrid token not configured. Falling back to public indexers.", "error");
+                addLog("Warning: No Debrid token configured. Falling back to public indexers.", "error");
             }
 
             setProgress(25, "Resolving TMDb external mappings...");
@@ -5126,7 +5541,12 @@
                 addLog(`Targeting Movie (movie query: ${queryId})`, "info");
             }
 
-            const configSegment = hasRD ? `providers=yts,eztv,rarbg,1337x,thepiratebay,torrentgalaxy|realdebrid=${rdToken}` : `providers=yts,eztv,rarbg,1337x,thepiratebay,torrentgalaxy`;
+            let configSegment = `providers=yts,eztv,rarbg,1337x,thepiratebay,torrentgalaxy`;
+            if (hasRD) {
+                configSegment += `|realdebrid=${rdToken}`;
+            } else if (hasAD) {
+                configSegment += `|alldebrid=${adToken}`;
+            }
             const torrentioUrl = `https://torrentio.strem.fun/${configSegment}/stream/${queryType}/${queryId}.json`;
             const notorrentUrl = `https://addon.notorrent2.workers.dev/stream/${queryType}/${queryId}.json`;
             const streamvixUrl = `https://streamvix.hayd.uk/%7B%22tmdbApiKey%22%3A%22%22%2C%22mediaFlowProxyUrl%22%3A%22%22%2C%22mediaFlowProxyPassword%22%3A%22%22%2C%22animeunityEnabled%22%3A%22on%22%2C%22animesaturnEnabled%22%3A%22on%22%2C%22animeworldEnabled%22%3A%22on%22%7D/stream/${queryType}/${queryId}.json`;
@@ -5153,7 +5573,7 @@
                     const streams = torrentioRes.value.streams;
                     addLog(`Torrentio returned ${streams.length} candidate P2P/Cached streams.`, "success");
                     streams.forEach(s => {
-                        resolvedLinks.push(parseTorrentioStream(s, hasRD));
+                        resolvedLinks.push(parseTorrentioStream(s, hasRD, hasAD));
                     });
                 } else {
                     addLog("Torrentio query returned no streams or timed out.", "error");
