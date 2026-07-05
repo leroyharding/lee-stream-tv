@@ -1691,6 +1691,10 @@
                                 <i data-lucide="heart" style="width: 18px; height: 18px;"></i>
                                 <span>Watchlist</span>
                             </li>
+                            <li class="menu-item" id="nav-history" onclick="switchTab('history')">
+                                <i data-lucide="history" style="width: 18px; height: 18px;"></i>
+                                <span>Debrid History</span>
+                            </li>
                             <li class="menu-item" id="nav-settings" onclick="switchTab('settings')">
                                 <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
                                 <span>Settings</span>
@@ -1781,7 +1785,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.6</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.7</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -1926,6 +1930,14 @@
                                 <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
                                 <span>Load 100 More</span>
                             </button>
+                        </div>
+
+                        <!-- Debrid History Container -->
+                        <div id="history-shelf-container" style="display: none; flex-direction: column; gap: 20px;">
+                            <div class="cinema-shelf-header" style="margin-bottom: 5px;">
+                                <span class="cinema-shelf-title" style="font-size: 1.8rem; color: #fff;">Debrid History</span>
+                            </div>
+                            <div id="history-grid-shelf" class="media-grid"></div>
                         </div>
 
                         <!-- Live TV & IPTV Client Interface -->
@@ -3312,7 +3324,61 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 20; // Increment this with every release
+        async function loadDebridHistory() {
+            const adToken = localStorage.getItem('ad_access_token');
+            const shelf = document.getElementById('history-grid-shelf');
+            if (!shelf) return;
+            
+            if (!adToken) {
+                shelf.innerHTML = '<div style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center; padding: 40px;">All-Debrid is not connected. Please pair your account in Settings.</div>';
+                return;
+            }
+            
+            shelf.innerHTML = '<div style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center; padding: 40px;">Loading history from All-Debrid...</div>';
+            
+            try {
+                const res = await fetch(`https://api.alldebrid.com/v4/user/history?agent=leestreamtv&apikey=${adToken}`);
+                if (!res.ok) throw new Error('API Error');
+                const data = await res.json();
+                
+                if (data.status === 'success' && data.data && data.data.links && data.data.links.length > 0) {
+                    shelf.innerHTML = '';
+                    data.data.links.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'media-card';
+                        card.tabIndex = 0;
+                        card.onclick = () => playDebridHistoryItem(item.filename, item.link);
+                        
+                        card.innerHTML = `
+                            <div class="media-poster-container" style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; height: 260px;">
+                                <i data-lucide="video" style="width: 48px; height: 48px; color: var(--text-muted); opacity: 0.5;"></i>
+                            </div>
+                            <div class="media-info" style="padding: 10px;">
+                                <h3 class="media-title" style="white-space: normal; line-height: 1.2; font-size: 0.85rem;">${item.filename}</h3>
+                                <div class="media-meta" style="margin-top: 5px;">
+                                    <span>${new Date(item.date * 1000).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        `;
+                        shelf.appendChild(card);
+                    });
+                    lucide.createIcons();
+                } else {
+                    shelf.innerHTML = '<div style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center; padding: 40px;">No Debrid history found.</div>';
+                }
+            } catch (err) {
+                console.error("Failed to load Debrid history:", err);
+                shelf.innerHTML = '<div style="color: #f43f5e; grid-column: 1 / -1; text-align: center; padding: 40px;">Failed to load history.</div>';
+            }
+        }
+        
+        function playDebridHistoryItem(filename, linkUrl) {
+            selectedMedia = { title: filename, backdrop_path: null, poster_path: null };
+            currentPlayingItem = null;
+            playInBuiltinPlayer({ url: linkUrl, provider: 'All-Debrid History', resolution: 'Direct' });
+        }
+
+        const CURRENT_VERSION_CODE = 21; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3504,6 +3570,7 @@
             const genreShelf = document.getElementById('genre-bar-shelf');
             const mediaShelf = document.getElementById('media-grid-shelf');
             const liveTVShelf = document.getElementById('livetv-shelf-container');
+            const historyShelf = document.getElementById('history-shelf-container');
             const settingsShelf = document.getElementById('settings-shelf-container');
             const shelfTitleHeader = document.querySelector('.cinema-shelf-header');
             const searchContainer = document.querySelector('.search-container');
@@ -3514,6 +3581,7 @@
             if (genreShelf) genreShelf.style.display = 'none';
             if (mediaShelf) mediaShelf.style.display = 'none';
             if (liveTVShelf) liveTVShelf.style.display = 'none';
+            if (historyShelf) historyShelf.style.display = 'none';
             if (settingsShelf) settingsShelf.style.display = 'none';
             if (shelfTitleHeader) shelfTitleHeader.style.display = 'none';
             if (searchContainer) searchContainer.style.display = 'none';
@@ -3526,6 +3594,9 @@
                 if (liveTVChannels.length === 0) {
                     initLiveTV();
                 }
+            } else if (tab === 'history') {
+                if (historyShelf) historyShelf.style.display = 'flex';
+                loadDebridHistory();
             } else if (tab === 'settings') {
                 if (settingsShelf) settingsShelf.style.display = 'flex';
                 setTimeout(() => {
@@ -3593,6 +3664,7 @@
             const genreShelf = document.getElementById('genre-bar-shelf');
             const mediaShelf = document.getElementById('media-grid-shelf');
             const liveTVShelf = document.getElementById('livetv-shelf-container');
+            const historyShelf = document.getElementById('history-shelf-container');
             const settingsShelf = document.getElementById('settings-shelf-container');
             const shelfTitleHeader = document.querySelector('.cinema-shelf-header');
             const searchContainer = document.querySelector('.search-container');

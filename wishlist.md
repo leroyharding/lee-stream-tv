@@ -129,6 +129,13 @@ This file tracks potential future features and improvements for **LeeStreamTV**.
 | 54 | **Award Winners Catalog** | Dynamic catalog showing only Oscar/Emmy-winning movies and shows | Medium | 🟢 |
 | 55 | **Stremio Addon Parser** | Parse standard Stremio Addon URLs to dynamically add indexers without hardcoding | High | 🔴 |
 | 56 | **Live Sports Schedule** | Integrate a sports API to show live games and cross-reference with IPTV channels | Medium | 🔴 |
+| 57 | **AD "My Cloud" Drive** | Native tab to browse and stream files manually added to the user's All-Debrid account | Medium | 🟡 |
+| 58 | **Standalone Native Scraping** | Scrape public torrent sites natively and ping AD API for cached streams (no Stremio addons) | High | 🔴 |
+| 59 | **Cyberlocker/Hoster Support** | Scrape DDL sites (Rapidgator, etc.) and unlock them instantly via All-Debrid API | High | 🔴 |
+| 60 | **Live AD Download Manager** | Send uncached torrents to All-Debrid and track their active download progress natively | Medium | 🔴 |
+| 61 | **In-App AD Speed Test & Geo-Routing** | Ping AD global servers to visualize speeds and manually force optimal stream routing | Low | 🔴 |
+| 62 | **Cross-Device Debrid History** | (Completed) Sync the last 50 unlocked streams directly from AD to resume playback across devices | Low | 🟢 |
+| 63 | **Live Hoster Status Dashboard** | View live operational status of all AD premium hosters before scraping | Low | 🟢 |
 
 ---
 
