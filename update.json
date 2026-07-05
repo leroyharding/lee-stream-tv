@@ -1,6 +1,6 @@
 {
-  "versionCode": 18,
-  "versionName": "1.6.4",
-  "changelog": "Added full All-Debrid integration alongside Real-Debrid.",
+  "versionCode": 19,
+  "versionName": "1.6.5",
+  "changelog": "Since v1.6.0:\n• Added 7 new streaming networks (Hulu, Paramount+, Peacock, etc.)\n• Added 12 new premium movie franchises to Collections\n• Integrated All-Debrid alongside Real-Debrid\n• Added 'Continue Watching' feature with progress bars\n• Added in-app YouTube trailer embeds\n• Added full Episode Guide browser for TV shows",
   "apkUrl": "https://github.com/leroyharding/lee-stream-tv/raw/main/LeeStreamTV.apk"
 }

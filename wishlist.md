@@ -116,3 +116,40 @@ This file tracks potential future features and improvements for **LeeStreamTV**.
 | 48 | **Error Reporting** | Graceful error boundaries that show a friendly "Something went wrong" message and retry option | High | 🟡 |
 | 49 | **Offline Mode** | Fully functional watchlist and settings access when there's no internet connection | Medium | 🟡 |
 | 50 | **Multiple User Profiles** | Support for multiple user profiles on the same device with separate watchlists and preferences | Low | 🔴 |
+
+---
+
+## 🚀 Advanced Next-Gen Features
+
+| # | Feature | Description | Priority | Effort |
+|---|---------|-------------|----------|--------|
+| 51 | **Dedicated Provider Shelves** | (Completed) Dynamic TMDB shelves for specific networks like Netflix, Apple TV+, and HBO Max | High | 🟢 |
+| 52 | **Anime Integration** | Dedicated Anime tab pulling from AniList/Kitsu with Nyaa.si torrent integration | Medium | 🔴 |
+| 53 | **Trakt.tv Community Lists** | Pull dynamic Trakt catalogs (e.g., "Most Anticipated Movies", "IMDb Top 250") | High | 🟡 |
+| 54 | **Award Winners Catalog** | Dynamic catalog showing only Oscar/Emmy-winning movies and shows | Medium | 🟢 |
+| 55 | **Stremio Addon Parser** | Parse standard Stremio Addon URLs to dynamically add indexers without hardcoding | High | 🔴 |
+| 56 | **Live Sports Schedule** | Integrate a sports API to show live games and cross-reference with IPTV channels | Medium | 🔴 |
+
+---
+
+## 📚 Planned Local Collections
+
+The following popular movie franchises have been identified as great candidates for the `localCollections` array to expand the default discovery feed.
+
+### 🍿 Sci-Fi & Fantasy
+- **Star Wars Collection** (`tmdb:col:10`)
+- **Harry Potter Collection** (`tmdb:col:1241`)
+- **Jurassic Park Collection** (`tmdb:col:328`)
+- **The Hunger Games Collection** (`tmdb:col:131635`)
+
+### 💥 Action & Superheroes
+- **The Avengers Collection** (`tmdb:col:86311`)
+- **Mission: Impossible Collection** (`tmdb:col:87359`)
+- **Fast & Furious Collection** (`tmdb:col:9485`)
+- **James Bond (Daniel Craig) Collection** (`tmdb:col:645`)
+- **Spider-Man (Tom Holland) Collection** (`tmdb:col:531241`)
+
+### 🗡️ Adventure & Classics
+- **Indiana Jones Collection** (`tmdb:col:84`)
+- **Pirates of the Caribbean Collection** (`tmdb:col:295`)
+- **The Terminator Collection** (`tmdb:col:528`)

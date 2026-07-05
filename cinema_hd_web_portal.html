@@ -1735,11 +1735,53 @@
                                 </span>
                                 <span>Apple TV+</span>
                             </li>
+                            <li class="menu-item" id="nav-provider-hulu" onclick="selectProvider(15)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #1ce783; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900; font-size: 1.1rem; line-height: 1; text-shadow: 0 0 5px rgba(28, 231, 131, 0.3); letter-spacing: -1px;">hu</span>
+                                </span>
+                                <span>Hulu</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-paramount" onclick="selectProvider(2616)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #0064ff; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 900; font-size: 1rem; line-height: 1; text-shadow: 0 0 5px rgba(0, 100, 255, 0.3);">P+</span>
+                                </span>
+                                <span>Paramount+</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-peacock" onclick="selectProvider(386)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="background: conic-gradient(from 180deg, #ffb800, #ff0000, #c400ff, #00d1ff, #00ff0a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: sans-serif; font-weight: 900; font-size: 1.1rem; line-height: 1;">P</span>
+                                </span>
+                                <span>Peacock</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-crunchyroll" onclick="selectProvider(283)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #f47521; font-family: sans-serif; font-weight: 900; font-size: 1rem; line-height: 1; text-shadow: 0 0 5px rgba(244, 117, 33, 0.3);">cr</span>
+                                </span>
+                                <span>Crunchyroll</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-starz" onclick="selectProvider(43)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #fff; font-family: sans-serif; font-weight: 900; font-size: 0.65rem; line-height: 1; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);">STZ</span>
+                                </span>
+                                <span>Starz</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-amc" onclick="selectProvider(526)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #fff; font-family: 'Helvetica Neue', sans-serif; font-weight: 900; font-size: 0.55rem; line-height: 1; letter-spacing: 0.5px; border: 1px solid #fff; padding: 1px 2px; border-radius: 2px;">AMC+</span>
+                                </span>
+                                <span>AMC+</span>
+                            </li>
+                            <li class="menu-item" id="nav-provider-criterion" onclick="selectProvider(258)">
+                                <span class="provider-icon-wrapper" style="width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <span style="color: #e5e5e5; font-family: 'Times New Roman', serif; font-weight: 900; font-size: 1.2rem; line-height: 1; text-shadow: 0 0 5px rgba(229, 229, 229, 0.3);">C</span>
+                                </span>
+                                <span>Criterion</span>
+                            </li>
                         </ul>
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.3</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.5</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -3270,7 +3312,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 18; // Increment this with every release
+        const CURRENT_VERSION_CODE = 19; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -3530,6 +3572,13 @@
             else if (providerId === 337) navId = 'nav-provider-disney';
             else if (providerId === 9) navId = 'nav-provider-prime';
             else if (providerId === 350) navId = 'nav-provider-apple';
+            else if (providerId === 15) navId = 'nav-provider-hulu';
+            else if (providerId === 2616) navId = 'nav-provider-paramount';
+            else if (providerId === 386) navId = 'nav-provider-peacock';
+            else if (providerId === 283) navId = 'nav-provider-crunchyroll';
+            else if (providerId === 43) navId = 'nav-provider-starz';
+            else if (providerId === 526) navId = 'nav-provider-amc';
+            else if (providerId === 258) navId = 'nav-provider-criterion';
             
             const targetNav = document.getElementById(navId);
             if (targetNav) targetNav.classList.add('active');
@@ -3599,6 +3648,13 @@
                 else if (activeProvider === 337) providerName = 'Disney+ ';
                 else if (activeProvider === 9) providerName = 'Prime Video ';
                 else if (activeProvider === 350) providerName = 'Apple TV+ ';
+                else if (activeProvider === 15) providerName = 'Hulu ';
+                else if (activeProvider === 2616) providerName = 'Paramount+ ';
+                else if (activeProvider === 386) providerName = 'Peacock ';
+                else if (activeProvider === 283) providerName = 'Crunchyroll ';
+                else if (activeProvider === 43) providerName = 'Starz ';
+                else if (activeProvider === 526) providerName = 'AMC+ ';
+                else if (activeProvider === 258) providerName = 'Criterion ';
                 
                 shelfTitle.innerText = `${catLabel} ${providerName}${typeLabel} Releases`;
             }
@@ -4456,6 +4512,138 @@
                             overview: "The sci-fi franchise that redefined action cinema, following humanity's rebellion against simulated control.",
                             poster: "https://image.tmdb.org/t/p/w500/lhLyVw5hK3aO2i472tG86z4.jpg",
                             backdrop: "https://image.tmdb.org/t/p/original/xyhrCEdB4XRkelfVsqXeUZ6rLHi.jpg"
+                        },
+                        {
+                            id: "tmdb:col:10",
+                            title: "Star Wars Collection",
+                            type: "collections",
+                            year: "1977 - 2019",
+                            rating: "8.2",
+                            genre: "Sci-Fi, Adventure",
+                            overview: "An epic space-opera theatrical film series, which depicts the adventures of various characters \"a long time ago in a galaxy far, far away….\"",
+                            poster: "https://image.tmdb.org/t/p/w500/pWVLFh4OuejTpUaDQbB1C4zoS2p.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/iY2ujEY2m68OTTlPFTiHub9joHS.jpg"
+                        },
+                        {
+                            id: "tmdb:col:1241",
+                            title: "Harry Potter Collection",
+                            type: "collections",
+                            year: "2001 - 2011",
+                            rating: "7.9",
+                            genre: "Fantasy, Adventure",
+                            overview: "The Harry Potter films are a fantasy series based on the series of seven Harry Potter novels by British writer J. K. Rowling.",
+                            poster: "https://image.tmdb.org/t/p/w500/eVPs2Y0LyvTLZn6AP5Z6O2rtiGB.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/kmEsQL2vOTA0jnM28fXS45Ky8kX.jpg"
+                        },
+                        {
+                            id: "tmdb:col:328",
+                            title: "Jurassic Park Collection",
+                            type: "collections",
+                            year: "1993 - 2022",
+                            rating: "7.4",
+                            genre: "Adventure, Sci-Fi",
+                            overview: "An American science fiction adventure film series based on the novel of the same name by Michael Crichton. The films center on the fictional Isla Nublar near Costa Rica in the Central American Pacific Coast, where a billionaire philanthropist and a small team of genetic scientists have created an amusement park of cloned dinosaurs.",
+                            poster: "https://image.tmdb.org/t/p/w500/qIm2nHXLpBBdMxi8dvfrnDkBUDh.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/njFixYzIxX8jsn6KMSEtAzi4avi.jpg"
+                        },
+                        {
+                            id: "tmdb:col:131635",
+                            title: "The Hunger Games Collection",
+                            type: "collections",
+                            year: "2012 - 2023",
+                            rating: "7.2",
+                            genre: "Sci-Fi, Action, Thriller",
+                            overview: "A science fiction film series based on the novel of the same name by Suzanne Collins. The film series takes place in a dystopian post-apocalyptic future in the nation of Panem.",
+                            poster: "https://image.tmdb.org/t/p/w500/cEBNDEMGqvSvU0knEv9Wl3dk5kv.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/Ipp7cegtub4t0mu7xaKLQkYoGc.jpg"
+                        },
+                        {
+                            id: "tmdb:col:86311",
+                            title: "The Avengers Collection",
+                            type: "collections",
+                            year: "2012 - 2019",
+                            rating: "8.3",
+                            genre: "Action, Sci-Fi, Adventure",
+                            overview: "A superhero film series produced by Marvel Studios based on the Marvel Comics superhero team of the same name, and part of the Marvel Cinematic Universe (MCU).  The series features an ensemble cast from the Marvel Cinematic Universe series films, as they join forces for the peacekeeping organization S.H.I.E.L.D. led by Nick Fury.",
+                            poster: "https://image.tmdb.org/t/p/w500/yFSIUVTCvgYrpalUktulvk3Gi5Y.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/2UNUv4NJdC36E5myDHACBJ99EwL.jpg"
+                        },
+                        {
+                            id: "tmdb:col:87359",
+                            title: "Mission: Impossible Collection",
+                            type: "collections",
+                            year: "1996 - 2023",
+                            rating: "7.6",
+                            genre: "Action, Adventure, Thriller",
+                            overview: "Mission: Impossible is a series of a secret agent thriller films based on the popular 1966–73 television series. They chronicle the missions of a team of secret government agents known as the Impossible Missions Force (IMF) under the leadership of agent Ethan Hunt.",
+                            poster: "https://image.tmdb.org/t/p/w500/geEjCGfdmRAA1skBPwojcdvnZ8A.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/mroWh717g0Ah2c0rrPGW6f3EWMM.jpg"
+                        },
+                        {
+                            id: "tmdb:col:9485",
+                            title: "The Fast and the Furious Collection",
+                            type: "collections",
+                            year: "2001 - 2023",
+                            rating: "6.8",
+                            genre: "Action, Crime, Thriller",
+                            overview: "An action film series centered on illegal street racing and heists.",
+                            poster: "https://image.tmdb.org/t/p/w500/zOCnMPoUxgJK1RFPfN4PcnT16gr.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/z5A5W3WYJc3UVEWljSGwdjDgQ0j.jpg"
+                        },
+                        {
+                            id: "tmdb:col:645",
+                            title: "James Bond Collection",
+                            type: "collections",
+                            year: "2006 - 2021",
+                            rating: "7.5",
+                            genre: "Action, Thriller, Adventure",
+                            overview: "The James Bond Collection is a legendary spy film series based on Ian Fleming’s novels, following MI6 agent 007, James Bond, as he takes on global threats with style, gadgets, and charm. Produced by EON Productions, the franchise spans 25 official films (1962–2021) and has featured six actors, from Sean Connery to Daniel Craig. Known for its thrilling action, iconic villains, Bond girls, and unforgettable theme songs, the series remains a cornerstone of the spy genre. With espionage, luxury cars, and shaken-not-stirred martinis, Bond continues to captivate audiences worldwide.",
+                            poster: "https://image.tmdb.org/t/p/w500/ofwSiqOFShhunAIYYdSMHMJQSx2.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/dOSECZImeyZldoq0ObieBE0lwie.jpg"
+                        },
+                        {
+                            id: "tmdb:col:531241",
+                            title: "Spider-Man (MCU) Collection",
+                            type: "collections",
+                            year: "2017 - 2021",
+                            rating: "8.1",
+                            genre: "Action, Adventure, Sci-Fi",
+                            overview: "A collection of films following Peter Parker as he navigates adolescence while taking on the responsibilities of being Spider-Man in a world filled with superheroes. As Peter faces increasingly complex threats, he must confront the consequences of his choices and learn what it truly means to be a hero in a larger universe.",
+                            poster: "https://image.tmdb.org/t/p/w500/yeba3Y820OjApZO9aJevDsNeMEd.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/AvnqpRwlEaYNVL6wzC4RN94EdSd.jpg"
+                        },
+                        {
+                            id: "tmdb:col:84",
+                            title: "Indiana Jones Collection",
+                            type: "collections",
+                            year: "1981 - 2023",
+                            rating: "7.8",
+                            genre: "Adventure, Action",
+                            overview: "Adventure film series created by George Lucas and Philip Kaufman starring Harrison Ford as archaeologist Dr. Henry Walton \"Indiana\" Jones, Jr., and directed by Steven Spielberg and James Mangold. Spanning the globe, on death-defying archeological endeavors, if adventure has a name... it must be Indiana Jones.",
+                            poster: "https://image.tmdb.org/t/p/w500/lpxDrACKJhbbGOlwVMNz5YCj6SI.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/s4xWmz9PEjPERSRcd7H7xMJpYvE.jpg"
+                        },
+                        {
+                            id: "tmdb:col:295",
+                            title: "Pirates of the Caribbean Collection",
+                            type: "collections",
+                            year: "2003 - 2017",
+                            rating: "7.1",
+                            genre: "Adventure, Fantasy, Action",
+                            overview: "A series of fantasy swashbuckler films based on Walt Disney's theme park ride of the same name. The films follow the adventures of Captain Jack Sparrow and take place in a world ruled by the British Empire, the East India Trading Company and the Spanish Empire, with pirates representing freedom from the ruling powers.",
+                            poster: "https://image.tmdb.org/t/p/w500/zRBaZxS5YauLvRYjAdL4AUCwlht.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/wxgD3fB5lQ2sGJLog0rvXW049Pf.jpg"
+                        },
+                        {
+                            id: "tmdb:col:528",
+                            title: "The Terminator Collection",
+                            type: "collections",
+                            year: "1984 - 2019",
+                            rating: "7.3",
+                            genre: "Action, Sci-Fi, Thriller",
+                            overview: "A series of science-fiction films about the futuristic conflict between the humans led by John Connor and the Terminators that are made and controlled by Skynet, a self-aware super computer that started Armageddon and may indeed end humanity for good. Skynet's most well-known products in its genocidal goals are the various terminator models, such as the T-800 (Model 101).",
+                            poster: "https://image.tmdb.org/t/p/w500/kpZxdNsAV7qTdTLwKM5NLqa7GEo.jpg",
+                            backdrop: "https://image.tmdb.org/t/p/original/sCnBEw2Yu6foEjs4Xb4eMddYHRo.jpg"
                         }
                     ];
 
