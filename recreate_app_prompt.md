@@ -17,7 +17,7 @@ This application is designed to run inside an Android WebView container (with na
    - **Google Fonts**: Load Outfit, Space Grotesk, and JetBrains Mono.
    - **Lucide Icons**: Include the Lucide icons library (`https://unpkg.com/lucide@latest`) and initialize it dynamically using `lucide.createIcons()` whenever new DOM nodes are rendered.
 3. **Vanilla Development**: Write clean, modern Vanilla HTML5/CSS3/JavaScript (ES6+). Do not use external framework code (React, Vue, Tailwind, etc.).
-4. **Resiliency & Fallbacks**: Provide structured offline/fallback mock data for catalogs, IPTV, and guides so that the app remains functional and visually complete even when APIs fail.
+4. **Resiliency & Fallbacks**: Provide structured offline/fallback mock data for catalogs and guides so that the app remains functional and visually complete even when APIs fail.
 
 ---
 
@@ -33,7 +33,7 @@ This application is designed to run inside an Android WebView container (with na
   - Automatically fade out and **remove the element from the DOM** after 3.2 seconds. *Crucial:* The element must be deleted, not just hidden, so that it does not intercept D-pad navigation or mouse clicks.
 - **Ambient Glows**: Place two large blur-filtered backdrop glow rings (orange in top-left, purple in bottom-right) behind the viewport.
 - **Sidebar Layout**:
-  - Left panel: Sidebar navigation with sub-categories: **Discover Movies**, **TV Shows**, **Collections**, **Watchlist**, **Settings**.
+  - Left panel: Sidebar navigation with sub-categories: **Discover Movies**, **TV Shows**, **Collections**, **Debrid History**, **Watchlist**, **Settings**, **Info**.
   - Provider section: Quick access filters for **Netflix**, **HBO Max**, **Disney+**, **Prime Video**, and **Apple TV+**.
   - Right panel: Main viewport rendering search bars, filter shelves, dynamic content grids, or detail modals.
 
@@ -65,70 +65,60 @@ Implement a robust spatial navigation system to make the app fully controllable 
 ### 1. TMDB Catalog & Search API
 - **API Config**: Use TMDB API Key `8711e2c6b0504a3277a840e1dde5ed86` with base URL `https://api.themoviedb.org/3`.
 - **Discovery**: Fetch trending lists, category lists (Action, Comedy, Sci-Fi, etc.), and filter parameters (by year using a dropdown, by genre using a horizontal pill bar).
+- **TV Show Episode Guide**: Build an episodic grid for TV Shows allowing users to navigate through specific seasons and episodes.
 - **Search**: Bind search inputs to query TMDB dynamically.
 - **Details modal**: Load synopses, backdrops, ratings, credits (cast names and headshots), and similar titles.
 
 ### 2. Stremio & TMDB Collections Integration
 - **Catalog Source**: When the "Collections" sidebar tab is clicked, fetch collection data from `https://ntl-collections-en.vercel.app/catalog/series/ntl_collections_catalog.json`.
-- **Collections View**: Allow browsing curated collection cards (e.g. John Wick, Lord of the Rings, The Dark Knight, The Matrix, Marvel).
-- **Direct Lookup**: Integrate collection fetching. If a collection starts with `tmdb:col:`, query TMDB directly using `${TMDB_BASE_URL}/collection/{id}`. Otherwise, fetch Stremio-mapped collection data from `https://ntl-collections-en.vercel.app/meta/series/{id}.json`.
-- **Included Movies Shelf**: When a collection is clicked, open the details modal. Hide standard streaming play buttons and replace them with an **Included Movies** horizontal shelf. Clicking any item on this shelf must fetch and launch details for that specific movie. Auto-focus the first movie card on load.
+- **Collections View**: Allow browsing curated collection cards.
+- **Direct Lookup**: Integrate collection fetching. If a collection starts with `tmdb:col:`, query TMDB directly using `${TMDB_BASE_URL}/collection/{id}`. Otherwise, fetch Stremio-mapped collection data.
+- **Included Movies Shelf**: When a collection is clicked, open the details modal. Hide standard streaming play buttons and replace them with an **Included Movies** horizontal shelf. Auto-focus the first movie card on load.
 
 ### 3. Continue Watching & Watchlist
 - **LocalStorage State**: Maintain a watchlist array and a continue watching dictionary in `localStorage`.
-- **Progress Tracking**: Keep track of `id`, `title`, `poster`, `type` (movies vs shows), `season`, `episode`, `currentTime`, `duration`, `percentage`, and `timestamp`.
-- **UI Integration**: Display a "Continue Watching" shelf at the top of the main catalog. Render a custom progress bar on each card's bottom edge.
+- **Progress Tracking**: Keep track of `id`, `title`, `poster`, `type`, `season`, `episode`, `currentTime`, `duration`, `percentage`, and `timestamp`.
+- **UI Integration**: Display a "Continue Watching" shelf at the top of the main catalog. Render a custom progress bar on each card's bottom edge. Auto-mark items as watched if >90% complete.
 
-### 4. Real-Debrid Integration
+### 4. Real-Debrid & All-Debrid Integration
 - **OAuth Device Flow**:
-  - Implement the RD device code activation workflow. Fetch a code from `https://api.real-debrid.com/oauth/v2/device/code`, display the user-code to the user, and begin polling the `/credentials` and `/token` endpoints.
-  - Provide a manual token entry field in settings.
-- **Token Verification**: Verify token validity on boot, refresh active sessions, and display user account profiles (expiration dates, premium statuses).
+  - Implement the RD and AD device code activation workflows. Display the user-code to the user, and begin polling their respective endpoints.
+  - Provide manual token entry fields in settings.
+- **Token Verification**: Verify token validity on boot, refresh active sessions, and display user account profiles.
+- **Cross-Device Debrid History Tab**:
+  - Fetch streaming history from Real-Debrid and All-Debrid APIs.
+  - Cross-reference torrent/link names against TMDB to automatically scrape and assign TMDB movie/show posters instead of displaying blank thumbnails.
+  - Allow direct 1-click playback parsing from this history view.
 
 ### 5. Multi-indexer Parallel Stream Scraper
 - **IMDb ID Resolution**: Query TMDB's external IDs endpoint `/external_ids` to translate TMDB IDs into IMDb IDs.
-- **Parallel Scrapers**: Query the following indexers simultaneously using `Promise.allSettled`:
-  - **Torrentio**: `https://torrentio.strem.fun/{config}/stream/{type}/{imdbId}.json` (passes the Real-Debrid token inside the configuration segment if paired).
-  - **NoTorrent**: `https://addon.notorrent2.workers.dev/stream/{type}/{imdbId}.json`
-  - **StreamViX**: `https://streamvix.hayd.uk/...`
-  - **HdHub**: `https://hdhub.thevolecitor.qzz.io/...`
+- **Parallel Scrapers**: Query indexers simultaneously (Torrentio, NoTorrent, StreamViX, HdHub) using `Promise.allSettled`.
 - **Link Parser & Sorting**:
-  - Extract stream URLs, titles, and resolutions (4K, 1080p, 720p).
-  - Sort the resulting links: Priority 1: Real-Debrid cached premium links (`rd`), Priority 2: Direct HTTP HLS links (`hd`), Priority 3: P2P magnet streams (`free`). Order by resolution descending inside each priority.
+  - Extract stream URLs, titles, resolutions (4K, 1080p, 720p).
+  - Sort links: Priority 1: Debrid cached premium links (`rd`/`ad`), Priority 2: Direct HTTP HLS links (`hd`), Priority 3: P2P magnet streams (`free`). Order by resolution descending.
 - **Audio Codec Compatibility Checking**:
-  - Parse the stream title for Dolby Digital, DTS, Atmos, TrueHD, AC3, EAC3, and 5.1/7.1 channel markers.
-  - Mark matching titles with a `⚠️ HD Audio (Silent on Web)` badge (since standard web browsers/WebViews cannot decode these audio codecs directly, leading to a silent stream).
+  - Mark matching titles with a `⚠️ HD Audio (Silent on Web)` badge for unplayable formats.
   - Mark standard stereo/AAC streams with a `🔊 Browser Stereo` badge.
-- **User Settings**: Support options to:
-  - Toggle "Web Sound Only" (hides HD Audio links).
-  - Toggle "Autoplay" (automatically launches the first compatible link).
-  - Toggle "Autoplay HdHub" (prefers HdHub links).
+- **User Settings & Info**:
+  - Provide toggles for "Web Sound Only", "Auto-Select 4K", "Autoplay", and "Autoplay HdHub".
+  - Include an `Info` page tab dynamically explaining all these toggles.
+  - Implement a "Show Scraper Logs" diagnostic overlay toggle.
 
 ### 6. HTML5 Video Player & External Player Intents
 - **Built-in Player**:
-  - Full-screen custom HTML5 video overlay with progress slider, playback timers, play/pause controls, and volume control.
-  - Automatically loads and resumes playback from the `localStorage` continue-watching timestamp.
+  - Full-screen custom HTML5 video overlay with progress slider, timers, and volume control.
+  - Stream Download support (Download buttons overlay).
 - **External Player Chooser**:
-  - On Android devices, when launching a stream, prompt the user to choose between: **Built-in Player**, **VLC**, **MX Player**, **Just Player**, or **System Default**. Let them tick a checkbox to "Remember Choice".
-  - If a player is chosen, trigger native Android Intents:
-    - VLC package: `org.videolan.vlc`
-    - MX Player package: `com.mxtech.videoplayer.ad`
-    - Just Player package: `com.brouken.player`
-    - Construct the intent string (e.g. `intent://{stream_url}#Intent;scheme={http/https};type=video/*;package={package_name};S.title={title};end`).
-  - Calculate and append the resume position in milliseconds (`resumePositionMs`) to the Intent extras.
+  - Prompt user to choose between: **Built-in Player**, **VLC**, **MX Player**, **Just Player**, or **System Default** via intent strings.
+  - Calculate and append the resume position in milliseconds to the Intent extras for external player tracking.
 - **WebView Native Bridge**:
-  - Check if `window.LeeStreamTVBridge` or `window.LeePrimeBridge` exists. If present, use native calls instead of intent schemes: `bridge.playInVLC(url, title, resumePositionMs)`, `bridge.playInMXPlayer(...)`, etc.
-  - Expose `window.onExternalPlayerResult(positionSec, durationSec)` so that the host Android app can pass back playback updates to save progress when a user exits an external player.
+  - Use `bridge.playInVLC()`, `bridge.downloadAndInstallAPK()`, etc., if native wrapper detected.
+  - Expose `window.onExternalPlayerResult(positionSec, durationSec)` so that the host app can report exit positions back to the Continue Watching progress system.
 
-### 7. IPTV Live TV Section
-- **Playlist Downloader**: Parse standard `.m3u` or `.m3u8` playlists, extracting group tags, logo paths, and stream URLs.
-- **Guide Parser (EPG)**: Fetch and parse standard XMLTV `.xml` or `.xml.gz` guides. Parse start/stop tags, title summaries, and descriptions.
-- **Schedule Simulator**: If the guide link fails, automatically generate simulated 24-hour schedules based on the channel name for continuous user feedback.
-- **Live Interface**: Left sidebar listing categories (News, Sports, Movies, etc.), center list showing channels, right container displaying the live video player and the EPG grid schedule.
-
-### 8. Application Auto-Updates
+### 7. Application Auto-Updates & Changelog History
 - Fetch `update.json` from the repository. Compare its `versionCode` against the current application `versionCode`.
-- If an update is available, prompt the user with a modal containing the changelog, a "Skip" button, and an "Update Now" button (which downloads the updated APK file).
+- If an update is available, prompt the user with an Update modal.
+- Render the complete historical changelog (from v1.2.0 upwards) inside the `Info` screen. If a new update is found, dynamically inject its updated changelog string into the DOM, avoiding older CDN-cached versions.
 
 ---
 
