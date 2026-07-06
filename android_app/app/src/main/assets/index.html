@@ -3606,12 +3606,12 @@ v1.2.0: Upgraded UI and update system</pre>
                 // Store the latest APK url globally for download buttons
                 window.latestApkUrl = updateInfo.apkUrl;
 
-                const infoChangelog = document.getElementById('info-page-changelog');
-                if (infoChangelog && updateInfo.changelog) {
-                    infoChangelog.innerText = updateInfo.changelog;
-                }
-
                 if (updateInfo.versionCode > CURRENT_VERSION_CODE) {
+                    const infoChangelog = document.getElementById('info-page-changelog');
+                    if (infoChangelog && updateInfo.changelog) {
+                        infoChangelog.innerText = updateInfo.changelog;
+                    }
+
                     document.getElementById('update-version-label').innerText = `Version ${updateInfo.versionName} is ready`;
                     document.getElementById('update-changelog-label').innerText = updateInfo.changelog;
                     
