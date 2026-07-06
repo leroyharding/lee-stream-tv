@@ -1785,7 +1785,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.8</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.6.9</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -3324,6 +3324,78 @@
             }
         }
 
+        function parseFilenameForTMDB(filename) {
+            let clean = filename.replace(/\.(mkv|mp4|avi|mov)$/i, '');
+            clean = clean.replace(/\./g, ' ');
+
+            // Check for TV shows first: S01E01, S1E1
+            const tvMatch = clean.match(/(.*?)\s*[Ss](\d{1,2})\s*[Ee](\d{1,2})/i);
+            if (tvMatch) {
+                return {
+                    title: tvMatch[1].trim(),
+                    isTv: true,
+                    season: parseInt(tvMatch[2], 10),
+                    episode: parseInt(tvMatch[3], 10)
+                };
+            }
+
+            // Check for movies with Year: "Title 2024" or "Title (2024)"
+            const yearMatch = clean.match(/(.*?)\s*\(?((?:19|20)\d{2})\)?/);
+            if (yearMatch) {
+                return {
+                    title: yearMatch[1].trim(),
+                    year: parseInt(yearMatch[2], 10),
+                    isTv: false
+                };
+            }
+
+            // Fallback for movies without year
+            let baseTitle = clean.replace(/(1080p|720p|2160p|4k|HDR|DV|H264|H265|x264|x265|DTS|DD5\.1|DDP5\.1|AAC|Web-DL|WEBRip|BluRay|BDRip|YIFY|RARBG|DL|ENG|ITA|SUB|MIRCrew)/gi, '');
+            baseTitle = baseTitle.replace(/[\(\)\[\]]/g, '').replace(/\s+/g, ' ').trim();
+            
+            return { title: baseTitle || filename, isTv: false };
+        }
+
+        async function fetchTMDBPosterForHistory(item, imgElement, iconElement, titleElement) {
+            const parsed = parseFilenameForTMDB(item.filename);
+            if (!parsed.title) return;
+            
+            try {
+                let url = '';
+                if (parsed.isTv) {
+                    url = `${TMDB_BASE_URL}/search/tv?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(parsed.title)}`;
+                } else {
+                    url = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(parsed.title)}`;
+                    if (parsed.year) {
+                        url += `&year=${parsed.year}`;
+                    }
+                }
+                
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.results && data.results.length > 0) {
+                    const match = data.results[0];
+                    if (match.poster_path) {
+                        imgElement.src = TMDB_IMAGE_BASE + match.poster_path;
+                        imgElement.onload = () => {
+                            iconElement.style.display = 'none';
+                            imgElement.style.display = 'block';
+                        };
+                        
+                        // Clean up title
+                        let displayTitle = match.title || match.name;
+                        if (parsed.isTv) {
+                            displayTitle += ` (S${String(parsed.season).padStart(2,'0')}E${String(parsed.episode).padStart(2,'0')})`;
+                        }
+                        titleElement.innerText = displayTitle;
+                    }
+                }
+            } catch (err) {
+                console.error("TMDB Poster fetch failed for", item.filename, err);
+            }
+        }
+
         async function loadDebridHistory() {
             const adToken = localStorage.getItem('ad_access_token');
             const shelf = document.getElementById('history-grid-shelf');
@@ -3350,8 +3422,9 @@
                         card.onclick = () => playDebridHistoryItem(item.filename, item.link);
                         
                         card.innerHTML = `
-                            <div class="media-poster-container" style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; height: 260px;">
-                                <i data-lucide="video" style="width: 48px; height: 48px; color: var(--text-muted); opacity: 0.5;"></i>
+                            <div class="media-poster-container" style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; height: 260px; position: relative;">
+                                <i data-lucide="video" class="fallback-icon" style="width: 48px; height: 48px; color: var(--text-muted); opacity: 0.5;"></i>
+                                <img class="poster-img" src="" style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 8px;">
                             </div>
                             <div class="media-info" style="padding: 10px;">
                                 <h3 class="media-title" style="white-space: normal; line-height: 1.2; font-size: 0.85rem;">${item.filename}</h3>
@@ -3361,6 +3434,12 @@
                             </div>
                         `;
                         shelf.appendChild(card);
+                        
+                        // Fire off async fetch for poster
+                        const imgEl = card.querySelector('.poster-img');
+                        const iconEl = card.querySelector('.fallback-icon');
+                        const titleEl = card.querySelector('.media-title');
+                        fetchTMDBPosterForHistory(item, imgEl, iconEl, titleEl);
                     });
                     lucide.createIcons();
                 } else {
@@ -3427,7 +3506,7 @@
             }
         }
 
-        const CURRENT_VERSION_CODE = 22; // Increment this with every release
+        const CURRENT_VERSION_CODE = 23; // Increment this with every release
 
         async function checkAppUpdates() {
             try {

@@ -1,6 +1,6 @@
 {
-  "versionCode": 22,
-  "versionName": "1.6.8",
-  "changelog": "v1.6.8 Hotfix:\n• Fixed All-Debrid History playback parsing and external player intent routing\n\nv1.6.7:\n• Added Native Cross-Device Debrid History tab!\n\nv1.6.6 Hotfix:\n• Fixed D-pad navigation in the All-Debrid modal",
+  "versionCode": 23,
+  "versionName": "1.6.9",
+  "changelog": "v1.6.9: Added TMDB Poster scraping to Debrid History tab!\n\nv1.6.8 Hotfix:\n• Fixed All-Debrid History playback parsing and external player intent routing\n\nv1.6.7:\n• Added Native Cross-Device Debrid History tab!",
   "apkUrl": "https://github.com/leroyharding/lee-stream-tv/raw/main/LeeStreamTV.apk"
 }

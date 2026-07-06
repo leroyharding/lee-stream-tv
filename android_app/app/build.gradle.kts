@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.leestreamtv"
         minSdk = 24
         targetSdk = 36
-        versionCode = 22
-        versionName = "1.6.8"
+        versionCode = 23
+        versionName = "1.6.9"
     }
 
     buildTypes {
