@@ -1695,6 +1695,10 @@
                                 <i data-lucide="history" style="width: 18px; height: 18px;"></i>
                                 <span>Debrid History</span>
                             </li>
+                            <li class="menu-item" id="nav-info" onclick="switchTab('info')">
+                                <i data-lucide="info" style="width: 18px; height: 18px;"></i>
+                                <span>Info & Instructions</span>
+                            </li>
                             <li class="menu-item" id="nav-settings" onclick="switchTab('settings')">
                                 <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
                                 <span>Settings</span>
@@ -2046,6 +2050,90 @@
                                             </div>
                                         </div>
                                     </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info Page Interface -->
+                    <div id="info-shelf-container" style="display: none; flex-direction: column; gap: 20px; max-width: 800px;">
+                        <div class="cinema-shelf-header" style="margin-bottom: 5px;">
+                            <span class="cinema-shelf-title" style="font-size: 1.8rem; color: #fff;">Application Info & Instructions</span>
+                        </div>
+                        
+                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 20px; color: var(--text-main); font-size: 0.95rem; line-height: 1.6;">
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Welcome to LeeStreamTV</h3>
+                            <p>LeeStreamTV is a premium media aggregation app designed to give you a cinematic experience. Browse, search, and discover your favorite movies and TV shows effortlessly.</p>
+
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Key Features</h3>
+                            <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 10px;">
+                                <li><strong style="color: #fff;">Discover Movies & Shows:</strong> Browse popular and trending titles across various genres. Use the genre filters and network providers to narrow down your search.</li>
+                                <li><strong style="color: #fff;">Collections & Watchlist:</strong> Save titles to your Collections or Watchlist to easily access them later.</li>
+                                <li><strong style="color: #fff;">Network Providers:</strong> Filter content by major network providers like Netflix, HBO, Disney+, Prime Video, and more.</li>
+                            </ul>
+
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">How to Add Real-Debrid or All-Debrid</h3>
+                            <p>Real-Debrid and All-Debrid are unrestricted downloaders that allow you to stream cached torrents at high speeds without buffering. Connecting an account unlocks the highest quality 4K and 1080p links.</p>
+                            <ol style="margin-left: 20px; display: flex; flex-direction: column; gap: 10px;">
+                                <li>Go to the <strong style="color: #fff;">Settings</strong> tab using the left sidebar menu.</li>
+                                <li>Find the <strong style="color: #fff;">Real-Debrid Sync</strong> or <strong style="color: #fff;">All-Debrid Sync</strong> option under Link Optimization.</li>
+                                <li>Toggle the switch to the <strong>ON</strong> position.</li>
+                                <li>A prompt will appear asking you to pair your device.</li>
+                                <li>Visit the authorization link provided (e.g., <a href="https://real-debrid.com/device" target="_blank" style="color: var(--accent-cinema); text-decoration: none;">real-debrid.com/device</a>) on your phone or computer.</li>
+                                <li>Enter the code displayed on your screen to authorize the application.</li>
+                                <li>Once authorized, the app will automatically fetch premium links for your media.</li>
+                            </ol>
+                            
+                            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 122, 0, 0.05); border-left: 4px solid var(--accent-cinema); border-radius: 4px;">
+                                <p style="margin: 0; font-size: 0.85rem;"><strong style="color: var(--accent-cinema);">Note:</strong> You must have an active premium subscription with the respective provider to link your account.</p>
+                            </div>
+
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Settings Explained</h3>
+                            <ul style="list-style-type: none; padding-left: 0; display: flex; flex-direction: column; gap: 10px;">
+                                <li><strong style="color: #fff;">Real-Debrid / All-Debrid Sync:</strong> Connects your premium debrid account to provide high-quality cached streaming links without buffering.</li>
+                                <li><strong style="color: #fff;">Auto-Select 4K:</strong> When enabled, the app automatically picks the best available 4K link from the scraped results so you don't have to manually select it.</li>
+                                <li><strong style="color: #fff;">Auto-Play HdHub (ENG):</strong> When playing content that scrapes HdHub, the app will automatically auto-play the first English link found.</li>
+                                <li><strong style="color: #fff;">Preferred Video Player:</strong> Allows you to choose your favorite video player (VLC, MX Player, Just Player, System Default, or Built-in web player). Select "Always Ask" to choose the player every time you open a link.</li>
+                                <li><strong style="color: #fff;">Web Sound Only:</strong> Filters out links with advanced audio formats (like AC3 or DTS) that may not play correctly on standard browser-based players. It ensures only AAC/MP3 audio is played.</li>
+                                <li><strong style="color: #fff;">Show Scraper Logs:</strong> Displays a real-time diagnostic overlay showing the background process of scraping and finding video links (useful for troubleshooting or advanced users).</li>
+                            </ul>
+
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Changelog & Version History</h3>
+                            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                                <pre id="info-page-changelog" style="font-family: inherit; white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">v1.6.9: Added TMDB Poster scraping to Debrid History tab!
+
+v1.6.8 Hotfix: Fixed All-Debrid History playback parsing and external player intent routing
+
+v1.6.7: Added Native Cross-Device Debrid History tab
+
+v1.6.6: Fixed Firestick spatial navigation for All-Debrid modal
+
+v1.6.5: Added 7 new streaming provider catalogs, local Collections, and All-Debrid support
+
+v1.6.3: Added external player resume tracking and enlarged copy/download buttons
+
+v1.6.2: Added stream download support and fixed Continue Watching scraper
+
+v1.6.1: Fixed back press double events on main activity resume
+
+v1.6.0: Added TV Show Episode Guide support
+
+v1.5.7: Fixed details modal scrolling and D-pad focus navigation inside Collections
+
+v1.5.6: Integrated Stremio Collections and added curated collection lists
+
+v1.5.4: Trigger auto-updates for in-app trailer players
+
+v1.5.3: Add Watch Trailer feature
+
+v1.5.1: Year Filter & Real-Debrid connection fixes
+
+v1.5.0: Add Web Preview Mode and Show Scraper Logs settings toggle
+
+v1.4.0: Add Streaming Catalogs filter
+
+v1.3.0: Optimize movie poster grid layout
+
+v1.2.0: Upgraded UI and update system</pre>
                             </div>
                         </div>
                     </div>
@@ -3518,6 +3606,11 @@
                 // Store the latest APK url globally for download buttons
                 window.latestApkUrl = updateInfo.apkUrl;
 
+                const infoChangelog = document.getElementById('info-page-changelog');
+                if (infoChangelog && updateInfo.changelog) {
+                    infoChangelog.innerText = updateInfo.changelog;
+                }
+
                 if (updateInfo.versionCode > CURRENT_VERSION_CODE) {
                     document.getElementById('update-version-label').innerText = `Version ${updateInfo.versionName} is ready`;
                     document.getElementById('update-changelog-label').innerText = updateInfo.changelog;
@@ -3700,6 +3793,7 @@
             const liveTVShelf = document.getElementById('livetv-shelf-container');
             const historyShelf = document.getElementById('history-shelf-container');
             const settingsShelf = document.getElementById('settings-shelf-container');
+            const infoShelf = document.getElementById('info-shelf-container');
             const shelfTitleHeader = document.querySelector('.cinema-shelf-header');
             const searchContainer = document.querySelector('.search-container');
             const loadMoreBtn = document.getElementById('load-more-container');
@@ -3711,6 +3805,7 @@
             if (liveTVShelf) liveTVShelf.style.display = 'none';
             if (historyShelf) historyShelf.style.display = 'none';
             if (settingsShelf) settingsShelf.style.display = 'none';
+            if (infoShelf) infoShelf.style.display = 'none';
             if (shelfTitleHeader) shelfTitleHeader.style.display = 'none';
             if (searchContainer) searchContainer.style.display = 'none';
             if (loadMoreBtn) loadMoreBtn.style.display = 'none';
@@ -3725,6 +3820,8 @@
             } else if (tab === 'history') {
                 if (historyShelf) historyShelf.style.display = 'flex';
                 loadDebridHistory();
+            } else if (tab === 'info') {
+                if (infoShelf) infoShelf.style.display = 'flex';
             } else if (tab === 'settings') {
                 if (settingsShelf) settingsShelf.style.display = 'flex';
                 setTimeout(() => {
