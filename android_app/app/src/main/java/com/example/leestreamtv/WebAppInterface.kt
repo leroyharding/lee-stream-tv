@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import android.widget.Toast
+import java.io.File
 
 class WebAppInterface(private val mContext: Context) {
 
@@ -156,8 +157,13 @@ class WebAppInterface(private val mContext: Context) {
             val onComplete = object : android.content.BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     try {
-                        val fileUri = manager.getUriForDownloadedFile(downloadId)
-                        if (fileUri != null) {
+                        val file = File(mContext.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS), "LeeStreamTV_Update.apk")
+                        if (file.exists()) {
+                            val fileUri = androidx.core.content.FileProvider.getUriForFile(
+                                mContext,
+                                mContext.packageName + ".fileprovider",
+                                file
+                            )
                             val installIntent = Intent(Intent.ACTION_VIEW).apply {
                                 setDataAndType(fileUri, "application/vnd.android.package-archive")
                                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
