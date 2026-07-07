@@ -1789,7 +1789,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.7.0</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.7.1</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -2099,7 +2099,9 @@
 
                             <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Changelog & Version History</h3>
                             <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
-                                <pre id="info-page-changelog" style="font-family: inherit; white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">v1.7.0: Added comprehensive Info & Instructions page with complete changelog
+                                <pre id="info-page-changelog" style="font-family: inherit; white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">v1.7.1: Fixed debrid history card overlaying video player
+
+v1.7.0: Added comprehensive Info & Instructions page with complete changelog
 
 v1.6.9: Added TMDB Poster scraping to Debrid History tab!
 
@@ -2652,7 +2654,7 @@ v1.2.0: Upgraded UI and update system</pre>
                                 <span class="player-title" id="player-title-label">Now Playing</span>
                                 <span class="debrid-label" id="player-subtitle-label">Stream Link</span>
                             </div>
-                            <button class="btn-modal-close" style="position: static;" onclick="closeVideoPlayer()">
+                            <button class="btn-modal-close" id="player-close-btn" style="position: static;" onclick="closeVideoPlayer()">
                                 <i data-lucide="x" style="width: 20px; height: 20px;"></i>
                             </button>
                         </div>
@@ -3596,7 +3598,7 @@ v1.2.0: Upgraded UI and update system</pre>
             }
         }
 
-        const CURRENT_VERSION_CODE = 24; // Increment this with every release
+        const CURRENT_VERSION_CODE = 25; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
@@ -6604,6 +6606,14 @@ v1.2.0: Upgraded UI and update system</pre>
             });
             updatePlayIcon();
 
+            // Focus the close button of the player overlay to manage remote control focus
+            setTimeout(() => {
+                const closeBtn = document.getElementById('player-close-btn');
+                if (closeBtn && typeof setFocus === 'function') {
+                    setFocus(closeBtn);
+                }
+            }, 200);
+
             // Set track update intervals
             video.addEventListener('timeupdate', updateVideoProgress);
             video.addEventListener('loadedmetadata', () => {
@@ -6713,6 +6723,16 @@ v1.2.0: Upgraded UI and update system</pre>
             if (controls) controls.classList.remove('hidden-controls');
             
             document.getElementById('video-player-overlay').style.display = 'none';
+
+            // Restore focus to last focused element or a valid card
+            setTimeout(() => {
+                const restoreCard = document.querySelector('.media-card.focused-tv') || 
+                                    document.querySelector('.media-card') ||
+                                    document.querySelector('.menu-item.active');
+                if (restoreCard && typeof setFocus === 'function') {
+                    setFocus(restoreCard);
+                }
+            }, 100);
         }
 
         function togglePlayPause() {
