@@ -3,13 +3,17 @@ package com.example.leestreamtv
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
+import android.widget.VideoView
 
 class MainActivity : Activity() {
 
@@ -60,9 +64,38 @@ class MainActivity : Activity() {
             addJavascriptInterface(bridge, "LeePrimeBridge")
         }
 
-        setContentView(webView)
+        val rootLayout = FrameLayout(this)
+        rootLayout.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        rootLayout.addView(webView)
+
+        val videoView = VideoView(this)
+        videoView.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        
+        val videoUri = Uri.parse("android.resource://$packageName/${R.raw.splash_video}")
+        videoView.setVideoURI(videoUri)
+        
+        videoView.setOnCompletionListener {
+            rootLayout.removeView(videoView)
+        }
+        
+        videoView.setOnErrorListener { _, _, _ ->
+            rootLayout.removeView(videoView)
+            true
+        }
+
+        rootLayout.addView(videoView)
+
+        setContentView(rootLayout)
         webView.loadUrl("file:///android_asset/index.html")
         webView.requestFocus()
+        
+        videoView.start()
     }
 
     private var lastResumeTime: Long = 0
