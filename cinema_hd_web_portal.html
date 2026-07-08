@@ -1789,7 +1789,7 @@
 
                         <!-- Sidebar Footer (Version and Copyright) -->
                         <div class="sidebar-footer" style="margin-top: 15px; text-align: center; font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed rgba(255, 122, 0, 0.15); padding-top: 12px;">
-                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.7.2</span>
+                            <span style="font-weight: 600; letter-spacing: 0.5px; color: #fff;">LeeStreamTV v1.7.3</span>
                             <span id="sidebar-preview-badge" style="display: none; background: rgba(255, 122, 0, 0.15); border: 1px solid rgba(255, 122, 0, 0.3); color: var(--accent-cinema); padding: 2px 8px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; align-self: center; margin-top: 2px;">Web Preview Mode</span>
                             <span style="font-size: 0.65rem;">&copy; 2026 TheTechGuy</span>
                         </div>
@@ -2099,7 +2099,9 @@
 
                             <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-cinema); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Changelog & Version History</h3>
                             <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
-                                <pre id="info-page-changelog" style="font-family: inherit; white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">v1.7.2: Fixed in-app update installer failing to launch on Android 10+
+                                <pre id="info-page-changelog" style="font-family: inherit; white-space: pre-wrap; font-size: 0.9rem; color: var(--text-secondary); margin: 0; line-height: 1.5;">v1.7.3: Added custom video splash screen
+
+v1.7.2: Fixed in-app update installer failing to launch on Android 10+
 
 v1.7.1: Fixed debrid history card overlaying video player
 
@@ -3600,7 +3602,7 @@ v1.2.0: Upgraded UI and update system</pre>
             }
         }
 
-        const CURRENT_VERSION_CODE = 26; // Increment this with every release
+        const CURRENT_VERSION_CODE = 27; // Increment this with every release
 
         async function checkAppUpdates() {
             try {
