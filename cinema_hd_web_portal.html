@@ -7533,11 +7533,10 @@ v1.2.0: Upgraded UI and update system</pre>
                     lastFocusedElement = element;
                     
                     // Call DOM focus for editable/form inputs
-                    if (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'BUTTON') {
-                        element.focus();
-                    } else {
-                        document.activeElement.blur();
+                    if (!element.hasAttribute('tabindex') && !['INPUT', 'SELECT', 'BUTTON', 'A', 'TEXTAREA'].includes(element.tagName)) {
+                        element.setAttribute('tabindex', '-1');
                     }
+                    element.focus({ preventScroll: true });
                     
                     // Custom centering for horizontal scroll containers (like genre bar, cast row, similar row, category filter row, IPTV categories)
                     const horizontalContainer = element.closest('.genre-bar, .horizontal-scroll-row, #category-filter-row, #livetv-category-list');
