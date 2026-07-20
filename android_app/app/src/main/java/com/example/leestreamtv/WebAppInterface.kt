@@ -210,19 +210,40 @@ class WebAppInterface(private val mContext: Context) {
 
     @JavascriptInterface
     fun openYoutubeTrailer(videoId: String) {
-        val intentApp = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$videoId"))
-        val intentWeb = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=$videoId"))
-        
-        val activity = mContext as? android.app.Activity
-        try {
-            mContext.startActivity(intentApp)
-        } catch (e: Exception) {
+        val activity = mContext as? android.app.Activity ?: return
+        activity.runOnUiThread {
             try {
-                mContext.startActivity(intentWeb)
-            } catch (ex: Exception) {
-                activity?.runOnUiThread {
-                    Toast.makeText(mContext, "Could not open YouTube: ${ex.message}", Toast.LENGTH_SHORT).show()
+                val dialog = android.app.Dialog(activity, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+                
+                val webView = android.webkit.WebView(activity).apply {
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+                    settings.mediaPlaybackRequiresUserGesture = false
+                    
+                    webChromeClient = android.webkit.WebChromeClient()
+                    webViewClient = android.webkit.WebViewClient()
+                    
+                    val url = "https://www.youtube.com/embed/$videoId?autoplay=1"
+                    val extraHeaders = HashMap<String, String>()
+                    extraHeaders["Referer"] = "https://www.youtube.com"
+                    loadUrl(url, extraHeaders)
                 }
+                
+                dialog.setContentView(webView)
+                dialog.setCancelable(true)
+                
+                dialog.setOnDismissListener {
+                    try {
+                        webView.loadUrl("about:blank")
+                        webView.destroy()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                
+                dialog.show()
+            } catch (e: Exception) {
+                Toast.makeText(activity, "Failed to load trailer: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

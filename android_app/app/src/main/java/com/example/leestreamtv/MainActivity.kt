@@ -14,6 +14,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import android.widget.VideoView
+import androidx.webkit.WebViewAssetLoader
 
 class MainActivity : Activity() {
 
@@ -33,6 +34,10 @@ class MainActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         )
 
+        val assetLoader = WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+
         webView = WebView(this).apply {
             // Enable JavaScript and storage APIs
             settings.javaScriptEnabled = true
@@ -51,8 +56,40 @@ class MainActivity : Activity() {
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                     return false
                 }
+
+                override fun shouldInterceptRequest(
+                    view: WebView?,
+                    request: android.webkit.WebResourceRequest?
+                ): android.webkit.WebResourceResponse? {
+                    return request?.let { assetLoader.shouldInterceptRequest(it.url) }
+                }
             }
-            webChromeClient = WebChromeClient()
+            webChromeClient = object : WebChromeClient() {
+                private var customView: View? = null
+                private var customViewCallback: WebChromeClient.CustomViewCallback? = null
+
+                override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                    if (customView != null) {
+                        callback?.onCustomViewHidden()
+                        return
+                    }
+                    customView = view
+                    customViewCallback = callback
+                    val rootLayout = this@MainActivity.window.decorView.findViewById<FrameLayout>(android.R.id.content)
+                    rootLayout.addView(view, FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    ))
+                }
+
+                override fun onHideCustomView() {
+                    val rootLayout = this@MainActivity.window.decorView.findViewById<FrameLayout>(android.R.id.content)
+                    rootLayout.removeView(customView)
+                    customView = null
+                    customViewCallback?.onCustomViewHidden()
+                    customViewCallback = null
+                }
+            }
 
             // Enable focus for D-Pad Remote controls
             isFocusable = true
@@ -92,7 +129,7 @@ class MainActivity : Activity() {
         rootLayout.addView(videoView)
 
         setContentView(rootLayout)
-        webView.loadUrl("file:///android_asset/index.html")
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
         webView.requestFocus()
         
         videoView.start()

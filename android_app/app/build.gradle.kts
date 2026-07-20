@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.leestreamtv"
         minSdk = 24
         targetSdk = 36
-        versionCode = 28
-        versionName = "1.7.4"
+        versionCode = 29
+        versionName = "1.7.5"
     }
 
     buildTypes {
@@ -81,4 +81,5 @@ dependencies {
   implementation(libs.androidx.navigation3.ui)
   implementation(libs.androidx.navigation3.runtime)
   implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+  implementation("androidx.webkit:webkit:1.12.0")
 }
