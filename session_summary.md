@@ -6,56 +6,41 @@ This file contains a detailed record of the changes, achievements, and structura
 
 ## 1. Project Achievements & Features Completed
 
+### D-pad Spatial Navigation & Scroll Jump Fix (v1.7.6)
+- **Root Cause Resolved**: Fixed the spatial navigation logic and focus scrolling algorithm where pressing DOWN in media grids or channel lists caused focus to jump out to fixed sidebars/headers, triggering `scrollIntoView()` to bounce the page scroll back up to the top.
+- **Section & Container Penalization**: Updated `navigate(direction)` to heavily penalize vertical cross-container jumping when moving `down`/`up` inside a content grid or channel list. Vertical navigation now strictly remains within the active list/grid until reaching the boundary or using `left`/`right`.
+- **Instant Glitch-Free Scrolling**: Replaced asynchronous smooth-scroll animations in `setFocus()` with `behavior: 'auto'` and `block: 'nearest'` scrolling to prevent bounding box measurement discrepancies during rapid D-pad key repeat.
+
 ### Comprehensive Info & Instructions Page (v1.7.0)
 - **Info Tab Integration**: Added a dedicated `Info & Instructions` tab to the sidebar menu.
-- **Detailed Documentation**: Hardcoded feature explanations, usage instructions, and settings breakdown (including Link Optimization, Auto-Select 4K, Auto-Play, Preferred Player, Web Sound Only, Scraper Logs) into an `info-shelf-container`.
-- **Dynamic Full Changelog**: Extracted the complete commit history back to v1.2.0 and embedded it directly into the info screen. Configured the javascript to safely default to the built-in full changelog and intelligently update itself only when a new version of `update.json` is fetched, preventing old CDN-cached updates from overwriting the view.
-
-### TMDB Poster Scraping for Debrid History (v1.6.9)
-- **Visual Upgrades**: Upgraded the Debrid history tab to automatically scrape and assign TMDB posters to links instead of blank thumbnails.
-
-### External Player Intent Routing & Debrid Integration (v1.6.8 - v1.6.6)
-- **All-Debrid Integration**: Added full native support for All-Debrid accounts alongside Real-Debrid.
-- **Cross-Device Debrid History Tab**: Added a native cross-device history tab to directly view and play cached debrid streams.
-- **Playback Parsing**: Fixed Firestick spatial navigation for the All-Debrid modal and corrected external player intent routing for external apps.
-
-### Streaming Providers & Local Collections (v1.6.5)
-- **Provider Catalogs**: Integrated 7 new streaming provider catalogs.
-- **Local Collections**: Added local collections support.
-
-### External Player Resume Tracking & Stream Downloads (v1.6.3 - v1.6.2)
-- **Resume Tracking**: Integrated playback resume position tracking for MX Player, VLC, and Just Player by capturing exit positions via `onActivityResult`.
-- **Continue Watching Progress**: Updated the app to auto-mark as watched if >90% complete.
-- **Stream Downloads**: Added stream download support.
-- **UI Enhancements**: Enlarged copy and download buttons with hover/focus backgrounds.
-
-### TV Show Episode Guide Support (v1.6.0)
-- Added dedicated episode guide tracking.
+- **Detailed Documentation**: Hardcoded feature explanations, usage instructions, and settings breakdown into an `info-shelf-container`.
+- **Dynamic Full Changelog**: Extracted the complete commit history back to v1.2.0 and embedded it directly into the info screen.
 
 ---
 
 ## 2. Codebase Modifications (Committed & Pushed to GitHub)
 
 1. **[cinema_hd_web_portal.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/cinema_hd_web_portal.html)** & **[android_app/app/src/main/assets/index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/assets/index.html)**:
-   - Added `info-shelf-container` and `nav-info` sidebar item.
-   - Refactored `checkAppUpdates()` to prevent remote caching from overwriting local changelogs.
-   - Updated footer and `CURRENT_VERSION_CODE` variables to v1.7.0.
+   - Refactored `setFocus()` to use `behavior: 'auto'` and `block: 'nearest'` to avoid scroll lag and bounding rect distortions.
+   - Enhanced `navigate(direction)` to scope candidates to active container bounds and penalize section jumping on vertical arrow presses.
 2. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
-   - Incremented version configurations to `versionCode = 24` and `versionName = "1.7.0"`.
+   - Incremented version configurations to `versionCode = 30` and `versionName = "1.7.6"`.
 3. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
-   - Updated to `versionCode: 24`, `versionName: "1.7.0"`.
-   - Expanded changelog list to include all commits back to v1.2.0.
+   - Updated to `versionCode: 30`, `versionName: "1.7.6"`.
+4. **[android_app/app/src/main/res/xml/file_paths.xml](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/res/xml/file_paths.xml)**:
+   - Corrected namespace URL typo from `schemas.github.com` to `schemas.android.com`.
 
 ---
 
 ## 3. Compiled APK Releases in the Workspace Root
 The following APKs were built and exist in the root workspace folder:
-- **`LeeStreamTV.apk`**: The latest stable v1.7.0 production build.
-- **`LeeStreamTV_v1.7.0.apk`**: Versioned copy of the v1.7.0 build.
+- **`LeeStreamTV.apk`**: The latest stable v1.7.6 production build.
+- **`LeeStreamTV_v1.7.6.apk`**: Versioned copy of the v1.7.6 build.
 
 ---
 
 ## 4. Current Status & Next Steps
 - **GitHub Code Repository**: All source modifications are committed and pushed to the `main` branch of `https://github.com/leroyharding/lee-stream-tv.git`.
-- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.7.0`.
-- **Next Step**: Firestick users should open **LeeStreamTV**, which will prompt them to download the `v1.7.0` update. Users can now explore the new Info page.
+- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.7.6`.
+- **Next Step**: Firestick users opening **LeeStreamTV** will automatically receive the `v1.7.6` update notice with smooth, jump-free D-pad list navigation.
+

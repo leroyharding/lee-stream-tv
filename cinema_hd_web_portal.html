@@ -7542,7 +7542,7 @@ v1.2.0: Upgraded UI and update system</pre>
                         
                         horizontalContainer.scrollTo({
                             left: targetScrollLeft,
-                            behavior: 'smooth'
+                            behavior: 'auto'
                         });
 
                         // Scroll parent vertically if the element itself is not fully in view
@@ -7555,7 +7555,7 @@ v1.2.0: Upgraded UI and update system</pre>
                                     const targetScrollTop = parent.scrollTop + (elemRect.top - parentRect.top) - (parentRect.height / 2) + (elemRect.height / 2);
                                     parent.scrollTo({
                                         top: targetScrollTop,
-                                        behavior: 'smooth'
+                                        behavior: 'auto'
                                     });
                                 }
                                 break;
@@ -7564,8 +7564,8 @@ v1.2.0: Upgraded UI and update system</pre>
                         }
                     } else {
                         element.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center',
+                            behavior: 'auto',
+                            block: 'nearest',
                             inline: 'nearest'
                         });
                     }
@@ -7601,6 +7601,9 @@ v1.2.0: Upgraded UI and update system</pre>
                     x: currentRect.left + currentRect.width / 2,
                     y: currentRect.top + currentRect.height / 2
                 };
+
+                const currentIsMediaOrChannel = currentFocused.closest('.media-card, .livetv-channel-card, .collection-movie-card, .episode-row-card, .link-row');
+                const currentContainer = currentFocused.closest('.grid-container, #catalog-grid, #livetv-channel-list, .debrid-history-list, .episode-list, .collection-grid, .modal-body, .sidebar, nav');
                 
                 let bestCandidate = null;
                 let bestScore = Infinity;
@@ -7626,35 +7629,49 @@ v1.2.0: Upgraded UI and update system</pre>
                             if (dx > 0) {
                                 primaryDist = dx;
                                 orthoDist = Math.abs(dy);
-                                if (primaryDist > orthoDist * 0.4) isValid = true;
+                                if (primaryDist > orthoDist * 0.3) isValid = true;
                             }
                             break;
                         case 'left':
                             if (dx < 0) {
                                 primaryDist = -dx;
                                 orthoDist = Math.abs(dy);
-                                if (primaryDist > orthoDist * 0.4) isValid = true;
+                                if (primaryDist > orthoDist * 0.3) isValid = true;
                             }
                             break;
                         case 'down':
                             if (dy > 0) {
                                 primaryDist = dy;
                                 orthoDist = Math.abs(dx);
-                                if (primaryDist > orthoDist * 0.4) isValid = true;
+                                if (primaryDist > orthoDist * 0.3) isValid = true;
                             }
                             break;
                         case 'up':
                             if (dy < 0) {
                                 primaryDist = -dy;
                                 orthoDist = Math.abs(dx);
-                                if (primaryDist > orthoDist * 0.4) isValid = true;
+                                if (primaryDist > orthoDist * 0.3) isValid = true;
                             }
                             break;
                     }
                     
                     if (isValid) {
-                        // Weighted 2D score
-                        const score = primaryDist + (orthoDist * 3.0);
+                        let score = primaryDist + (orthoDist * 3.5);
+                        
+                        // Check container boundaries
+                        const candContainer = candidate.closest('.grid-container, #catalog-grid, #livetv-channel-list, .debrid-history-list, .episode-list, .collection-grid, .modal-body, .sidebar, nav');
+                        const isDifferentSection = currentContainer && candContainer && currentContainer !== candContainer;
+                        
+                        // If moving vertically (down/up) inside a content list/grid, heavily penalize jumping to sidebar/header/outside containers
+                        if (isDifferentSection && (direction === 'down' || direction === 'up')) {
+                            score += 2000;
+                        }
+
+                        // If moving down/up from a list item, prefer candidates of similar type inside content area
+                        if (currentIsMediaOrChannel && candidate.closest('.menu-item, .filter-pill, .genre-pill') && (direction === 'down' || direction === 'up')) {
+                            score += 3000;
+                        }
+                        
                         if (score < bestScore) {
                             bestScore = score;
                             bestCandidate = candidate;
@@ -7662,7 +7679,7 @@ v1.2.0: Upgraded UI and update system</pre>
                     }
                 });
                 
-                // Relaxed threshold fallback for diagonal elements
+                // Relaxed threshold fallback for diagonal elements if no candidate found
                 if (!bestCandidate) {
                     allVisible.forEach(candidate => {
                         if (candidate === currentFocused) return;
@@ -7688,7 +7705,11 @@ v1.2.0: Upgraded UI and update system</pre>
                         }
                         
                         if (isValid) {
-                            const score = primaryDist + (orthoDist * 5.0);
+                            let score = primaryDist + (orthoDist * 5.0);
+                            const candContainer = candidate.closest('.grid-container, #catalog-grid, #livetv-channel-list, .debrid-history-list, .episode-list, .collection-grid, .modal-body, .sidebar, nav');
+                            if (currentContainer && candContainer && currentContainer !== candContainer && (direction === 'down' || direction === 'up')) {
+                                score += 2000;
+                            }
                             if (score < bestScore) {
                                 bestScore = score;
                                 bestCandidate = candidate;
