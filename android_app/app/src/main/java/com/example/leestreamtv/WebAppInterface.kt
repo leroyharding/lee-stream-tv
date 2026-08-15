@@ -169,6 +169,11 @@ class WebAppInterface(private val mContext: Context) {
         }
 
         try {
+            val oldFile = File(mContext.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS), "LeeStreamTV_Update.apk")
+            if (oldFile.exists()) {
+                oldFile.delete()
+            }
+            
             val request = android.app.DownloadManager.Request(Uri.parse(apkUrl)).apply {
                 setTitle("LeeStreamTV Update")
                 setDescription("Downloading the latest release...")
