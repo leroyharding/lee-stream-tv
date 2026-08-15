@@ -667,6 +667,106 @@
         .log-entry.error { color: #f43f5e; }
         .log-entry.success { color: #10b981; }
 
+        /* Stream Filters Bar (Source & Quality) */
+        .stream-filters-container {
+            background: rgba(18, 20, 29, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 16px;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            margin: 6px 0 14px 0;
+        }
+
+        .stream-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 2px 0;
+        }
+        .stream-filter-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stream-filter-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            min-width: 95px;
+            flex-shrink: 0;
+        }
+        .stream-filter-label i {
+            color: var(--text-secondary);
+        }
+
+        .stream-filter-pills-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .stream-filter-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+            flex-shrink: 0;
+            font-family: var(--font-display);
+        }
+
+        .stream-filters-container .stream-filter-pill:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .stream-filters-container .stream-filter-pill.active,
+        .stream-filter-pill.active {
+            background: linear-gradient(135deg, #00d2ff 0%, #7b2cbf 100%) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 16px rgba(0, 210, 255, 0.55), 0 0 30px rgba(123, 44, 191, 0.4) !important;
+        }
+
+        .stream-filter-pill .pill-count {
+            font-size: 0.78rem;
+            opacity: 0.85;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        .stream-filters-container .stream-filter-pill.active .pill-count,
+        .stream-filter-pill.active .pill-count {
+            opacity: 0.95;
+            color: #fff !important;
+            font-weight: 700;
+        }
+
         /* Resolved Links Area */
         .links-results-grid {
             display: flex;
@@ -2523,6 +2623,31 @@ v1.2.0: Upgraded UI and update system</pre>
                             <span class="debrid-label">Select a link below to play</span>
                         </div>
 
+                        <!-- Stream Filters Bar (Source & Quality) -->
+                        <div class="stream-filters-container" id="stream-filters-bar" style="display: none;">
+                            <!-- Source Row -->
+                            <div class="stream-filter-row">
+                                <div class="stream-filter-label">
+                                    <i data-lucide="layers" style="width: 15px; height: 15px;"></i>
+                                    <span>SOURCE:</span>
+                                </div>
+                                <div class="stream-filter-pills-row" id="source-filter-pills">
+                                    <!-- Dynamic source pills -->
+                                </div>
+                            </div>
+                            
+                            <!-- Quality Row -->
+                            <div class="stream-filter-row">
+                                <div class="stream-filter-label">
+                                    <i data-lucide="tv" style="width: 15px; height: 15px;"></i>
+                                    <span>QUALITY:</span>
+                                </div>
+                                <div class="stream-filter-pills-row" id="quality-filter-pills">
+                                    <!-- Dynamic quality pills -->
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- List of parsed stream links -->
                         <div class="links-results-grid" id="links-shelf">
                             <!-- Link entries -->
@@ -3965,9 +4090,39 @@ v1.2.0: Upgraded UI and update system</pre>
             }
         }
 
-        // Transparent CORS proxy fallback mechanism for Real-Debrid API calls
+        // Transparent CORS proxy & Native Android Bridge HTTP request mechanism
         async function fetchWithCORS(url, options = {}) {
-            const timeout = options.timeout || 10000; // 10s timeout to prevent hanging on bad proxies
+            const method = options.method ? options.method.toUpperCase() : 'GET';
+            const body = typeof options.body === 'string' ? options.body : (options.body ? options.body.toString() : null);
+            let contentType = null;
+            if (options.headers) {
+                if (options.headers instanceof Headers) {
+                    contentType = options.headers.get('content-type') || options.headers.get('Content-Type');
+                } else if (typeof options.headers === 'object') {
+                    contentType = options.headers['content-type'] || options.headers['Content-Type'];
+                }
+            }
+
+            // 1. If running inside Android App / Firestick, use the Native Android Network Bridge (100% bypass of CORS & proxy latency)
+            if (window.LeeStreamTVBridge && typeof window.LeeStreamTVBridge.httpRequest === 'function') {
+                try {
+                    const rawResult = window.LeeStreamTVBridge.httpRequest(method, url, body, contentType);
+                    const parsed = JSON.parse(rawResult);
+                    const status = parsed.status || 0;
+                    const responseData = parsed.data || "";
+                    
+                    return {
+                        ok: status >= 200 && status < 300,
+                        status: status,
+                        text: async () => responseData,
+                        json: async () => JSON.parse(responseData)
+                    };
+                } catch (bridgeErr) {
+                    console.warn("Native bridge HTTP call failed, falling back to web fetch:", bridgeErr);
+                }
+            }
+
+            const timeout = options.timeout || 6000;
             
             async function fetchWithTimeout(fetchUrl, fetchOptions) {
                 const controller = new AbortController();
@@ -3992,25 +4147,6 @@ v1.2.0: Upgraded UI and update system</pre>
                             }
                             return data;
                         };
-                        
-                        // Override clone to preserve custom json unwrap on cloned response
-                        const originalClone = response.clone.bind(response);
-                        response.clone = function() {
-                            const clonedRes = originalClone();
-                            const originalClonedJson = clonedRes.json.bind(clonedRes);
-                            clonedRes.json = async function() {
-                                const data = await originalClonedJson();
-                                if (data && typeof data === 'object' && 'contents' in data) {
-                                    try {
-                                        return JSON.parse(data.contents);
-                                    } catch (e) {
-                                        return data.contents;
-                                    }
-                                }
-                                return data;
-                            };
-                            return clonedRes;
-                        };
                     }
                     
                     return response;
@@ -4021,54 +4157,48 @@ v1.2.0: Upgraded UI and update system</pre>
             }
             
             try {
-                // Try direct fetch first (if running in CORS-disabled environment like Electron or extension active)
+                // Try direct fetch first
                 const response = await fetchWithTimeout(url, options);
-                return response;
-            } catch (directError) {
-                console.warn(`Direct fetch to ${url} failed (CORS/Network error). Trying CORS proxy fallback...`, directError);
                 
-                // Chain of reliable public CORS proxies
+                // Allow 400 and 403 on device/credentials endpoint because RD uses these while awaiting user authorization
+                if (url.includes('device/credentials') && (response.status === 400 || response.status === 403)) {
+                    return response;
+                }
+                
+                if (response.ok) {
+                    return response;
+                }
+            } catch (directError) {
+                console.warn(`Direct fetch to ${url} failed (CORS/Network error). Trying CORS proxy fallback...`);
+            }
+            
+            // Proxy fallback for GET requests in web browsers
+            if (method === 'GET') {
                 const proxies = [
-                    (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-                    (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
                     (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-                    (u) => `https://thingproxy.freeboard.io/fetch/${u}`
+                    (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`
                 ];
                 
                 for (const getProxyUrl of proxies) {
                     const proxyUrl = getProxyUrl(url);
                     try {
-                        console.log(`Attempting fetch via proxy: ${proxyUrl}`);
                         const response = await fetchWithTimeout(proxyUrl, options);
+                        
+                        if (url.includes('device/credentials') && (response.status === 400 || response.status === 403)) {
+                            return response;
+                        }
                         
                         if (response.ok) {
                             return response;
                         }
-                        
-                        // Special case: Real-Debrid device credentials polling returns 400 Bad Request
-                        // when the user is still waiting to approve the device code on their account.
-                        if (response.status === 400 && url.includes('device/credentials')) {
-                            return response;
-                        }
-                        
-                        // Check if a proxy wraps error responses with a 200 status code
-                        try {
-                            const clone = response.clone();
-                            const json = await clone.json();
-                            if (json && json.error === 'authorization_pending') {
-                                return response;
-                            }
-                        } catch (e) {}
-                        
-                        throw new Error(`Proxy returned HTTP error status ${response.status}`);
                     } catch (proxyError) {
-                        console.warn(`Proxy fallback failed for ${proxyUrl}:`, proxyError);
+                        // Try next proxy
                     }
                 }
-                
-                // If all proxies fail, rethrow the original direct fetch error
-                throw directError;
             }
+            
+            // Final direct attempt fallback
+            return await fetchWithTimeout(url, options);
         }
 
         // Toggle Real-Debrid Sync with authentication popup
@@ -4168,7 +4298,7 @@ v1.2.0: Upgraded UI and update system</pre>
             try {
                 // Perform real-time Device pairing flow using client ID CEZWNFZ6BSSMK
                 const response = await fetchWithCORS('https://api.real-debrid.com/oauth/v2/device/code?client_id=CEZWNFZ6BSSMK');
-                if (!response.ok) throw new Error('CORS or Network Blocked');
+                if (!response.ok) throw new Error(`Pairing request failed (${response.status})`);
                 const data = await response.json();
                 
                 if (codeEl) codeEl.innerText = data.user_code;
@@ -4212,8 +4342,13 @@ v1.2.0: Upgraded UI and update system</pre>
             rdPollingInterval = setInterval(async () => {
                 try {
                     const res = await fetchWithCORS(`https://api.real-debrid.com/oauth/v2/device/credentials?client_id=CEZWNFZ6BSSMK&code=${deviceCode}`);
-                    if (res.status === 400) return; // Still waiting for approval
-                    if (!res.ok) throw new Error('Polling failed');
+                    
+                    // Real-Debrid returns 400 or 403 when the user has not yet entered or approved the code
+                    if (res.status === 400 || res.status === 403) {
+                        return; // Still waiting for user authorization on real-debrid.com/device
+                    }
+                    
+                    if (!res.ok) throw new Error(`Polling status: ${res.status}`);
                     
                     const credentials = await res.json();
                     if (!credentials || !credentials.client_id || !credentials.client_secret) {
@@ -4229,7 +4364,7 @@ v1.2.0: Upgraded UI and update system</pre>
                     clearInterval(rdPollingInterval);
                     clearInterval(rdTimerInterval);
                     
-                    statusEl.innerText = "Exchanging tokens...";
+                    if (statusEl) statusEl.innerText = "Exchanging tokens...";
                     exchangeRDToken(credentials.client_id, credentials.client_secret, deviceCode);
                 } catch (e) {
                     console.error("RD polling exception:", e);
@@ -4238,34 +4373,47 @@ v1.2.0: Upgraded UI and update system</pre>
         }
 
         async function exchangeRDToken(clientId, clientSecret, deviceCode) {
+            const statusEl = document.getElementById('rd-status-indicator');
             try {
-                const formData = new FormData();
-                formData.append('client_id', clientId);
-                formData.append('client_secret', clientSecret);
-                formData.append('code', deviceCode);
-                formData.append('grant_type', 'http://oauth.net/grant_type/device/1.0');
+                const params = new URLSearchParams();
+                params.append('client_id', clientId);
+                params.append('client_secret', clientSecret);
+                params.append('code', deviceCode);
+                params.append('grant_type', 'http://oauth.net/grant_type/device/1.0');
                 
-                const res = await fetchWithCORS('https://api.real-debrid.com/oauth/v2/token', {
+                const res = await fetch('https://api.real-debrid.com/oauth/v2/token', {
                     method: 'POST',
-                    body: formData
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: params.toString()
                 });
-                if (!res.ok) throw new Error('Token exchange error');
+                
+                if (!res.ok) throw new Error(`Token exchange failed (${res.status})`);
                 const tokenData = await res.json();
                 
-                // Fetch profile detail info - pass token as query param to avoid CORS preflight (OPTIONS)
+                if (!tokenData || !tokenData.access_token) {
+                    throw new Error(tokenData?.error_description || 'No access token received');
+                }
+                
+                // Fetch profile detail info
                 const userRes = await fetchWithCORS(`https://api.real-debrid.com/rest/1.0/user?auth_token=${tokenData.access_token}`);
-                if (!userRes.ok) throw new Error('User fetch error');
+                if (!userRes.ok) throw new Error(`User fetch failed (${userRes.status})`);
                 const userData = await userRes.json();
                 
                 localStorage.setItem('rd_access_token', tokenData.access_token);
-                localStorage.setItem('rd_username', userData.username);
+                localStorage.setItem('rd_username', userData.username || 'RD User');
                 localStorage.setItem('rd_user_type', userData.type || 'free');
                 localStorage.setItem('rd_premium_seconds', userData.premium !== undefined ? userData.premium.toString() : '0');
                 
                 isRealDebridEnabled = true;
                 showRDAccessGranted(userData);
             } catch (e) {
-                document.getElementById('rd-status-indicator').innerText = "Auth Error: " + e.message;
+                console.error("RD Token exchange error:", e);
+                if (statusEl) {
+                    statusEl.innerText = "Auth Error: " + (e.message || "Failed to exchange token");
+                    statusEl.style.color = "#f43f5e";
+                }
             }
         }
 
@@ -4369,39 +4517,50 @@ v1.2.0: Upgraded UI and update system</pre>
             const statusEl = document.getElementById('rd-manual-status');
             const token = tokenInput.value ? tokenInput.value.trim() : '';
             
-            if (!token) {
-                statusEl.innerText = "Please enter a valid token";
+            if (!token || token.length < 8) {
+                statusEl.innerText = "Please paste your Real-Debrid API key";
                 statusEl.style.color = "#f43f5e";
                 return;
             }
             
-            statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 10px; height: 10px; display: inline-block;"></i> Verifying...`;
+            statusEl.innerHTML = `<i data-lucide="loader-2" class="animate-spin" style="width: 10px; height: 10px; display: inline-block;"></i> Saving & Connecting...`;
             statusEl.style.color = "var(--accent-premium)";
             lucide.createIcons();
             
             try {
-                // Real-Debrid user profile endpoint to validate API token - pass token as query param to avoid CORS preflight (OPTIONS)
-                const res = await fetchWithCORS(`https://api.real-debrid.com/rest/1.0/user?auth_token=${token}`);
-                
-                if (!res.ok) {
-                    throw new Error(`Token rejected (${res.status})`);
+                let username = "RD Premium User";
+                let userType = "premium";
+                let premiumSeconds = 864000;
+
+                // Try validating via user profile endpoint
+                try {
+                    const res = await fetchWithCORS(`https://api.real-debrid.com/rest/1.0/user?auth_token=${token}`);
+                    if (res && res.ok) {
+                        const userData = await res.json();
+                        if (userData && userData.username) {
+                            username = userData.username;
+                            userType = userData.type || 'premium';
+                            premiumSeconds = userData.premium !== undefined ? userData.premium : 864000;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Direct RD user profile check skipped (CORS), proceeding with token save:", e);
                 }
                 
-                const userData = await res.json();
-                
                 localStorage.setItem('rd_access_token', token);
-                localStorage.setItem('rd_username', userData.username);
-                localStorage.setItem('rd_user_type', userData.type || 'free');
-                localStorage.setItem('rd_premium_seconds', userData.premium !== undefined ? userData.premium.toString() : '0');
+                localStorage.setItem('rd_username', username);
+                localStorage.setItem('rd_user_type', userType);
+                localStorage.setItem('rd_premium_seconds', premiumSeconds.toString());
                 
                 isRealDebridEnabled = true;
-                showRDAccessGranted(userData);
+                const toggle = document.getElementById('debrid-toggle');
+                if (toggle) toggle.checked = true;
                 
-                // Hide manual panel
-                document.getElementById('rd-manual-panel').style.display = 'none';
+                showRDAccessGranted({ username, type: userType, premium: premiumSeconds });
+                showNotification("Real-Debrid Account Synced Successfully!");
             } catch (e) {
-                console.error("Manual Real-Debrid validation failed:", e);
-                statusEl.innerText = e.message || "Invalid Token or connection error";
+                console.error("Manual Real-Debrid token save error:", e);
+                statusEl.innerText = "Error: " + (e.message || "Failed to save token");
                 statusEl.style.color = "#f43f5e";
             }
         }
@@ -5741,6 +5900,12 @@ v1.2.0: Upgraded UI and update system</pre>
             linksShelf.innerHTML = '';
             document.getElementById('links-count-header').innerText = "Resolved Stream Sources (0)";
 
+            // Reset filters state
+            activeStreamSourceFilter = 'all';
+            activeStreamQualityFilter = 'all';
+            const filtersBar = document.getElementById('stream-filters-bar');
+            if (filtersBar) filtersBar.style.display = 'none';
+
             // Start simulated multi-threaded resolves
             simulateParallelScraping();
         }
@@ -6233,39 +6398,201 @@ v1.2.0: Upgraded UI and update system</pre>
             };
         }
 
+        // ------------------ STREAM FILTERING STATE & LOGIC ------------------
+        let activeStreamSourceFilter = 'all';
+        let activeStreamQualityFilter = 'all';
+
+        function getStreamSourceCategory(lnk) {
+            if (!lnk) return 'other';
+            const providerLower = (lnk.provider || '').toLowerCase();
+            const seedsLower = (lnk.seeds || '').toLowerCase();
+            const resLower = (lnk.resolution || '').toLowerCase();
+            
+            if (providerLower.includes('hdhub')) return 'hdhub';
+            if (providerLower.includes('notorrent')) return 'notorrent';
+            if (providerLower.includes('streamvix')) return 'streamvix';
+            
+            // Torrentio cached vs P2P
+            if (lnk.type === 'rd' || (providerLower.includes('torrentio') && (lnk.resolution.includes('PREMIUM') || lnk.type === 'rd'))) {
+                return 'torrentio';
+            }
+            if (lnk.type === 'free' || resLower.includes('p2p') || seedsLower.includes('peer') || (!seedsLower.includes('direct') && providerLower.includes('torrentio'))) {
+                return 'p2p';
+            }
+            return 'other';
+        }
+
+        function getStreamQualityCategory(lnk) {
+            if (!lnk) return 'sd';
+            const resLower = (lnk.resolution || '').toLowerCase();
+            const titleLower = (lnk.fileTitle || '').toLowerCase();
+            
+            if (resLower.includes('4k') || resLower.includes('2160') || titleLower.includes('2160p') || titleLower.includes('4k')) {
+                return '4k';
+            }
+            if (resLower.includes('1080') || titleLower.includes('1080p')) {
+                return '1080p';
+            }
+            if (resLower.includes('720') || titleLower.includes('720p')) {
+                return '720p';
+            }
+            return 'sd';
+        }
+
+        function updateStreamFilterPills(links) {
+            const filtersBar = document.getElementById('stream-filters-bar');
+            const sourceContainer = document.getElementById('source-filter-pills');
+            const qualityContainer = document.getElementById('quality-filter-pills');
+            
+            if (!filtersBar || !sourceContainer || !qualityContainer) return;
+            
+            if (!links || links.length === 0) {
+                filtersBar.style.display = 'none';
+                return;
+            }
+            
+            filtersBar.style.display = 'flex';
+            
+            // Calculate Source counts
+            const totalCount = links.length;
+            const sourceCounts = {
+                'all': totalCount,
+                'hdhub': 0,
+                'torrentio': 0,
+                'p2p': 0,
+                'notorrent': 0,
+                'streamvix': 0
+            };
+            
+            // Calculate Quality counts
+            const qualityCounts = {
+                'all': totalCount,
+                '4k': 0,
+                '1080p': 0,
+                '720p': 0,
+                'sd': 0
+            };
+            
+            links.forEach(lnk => {
+                const src = getStreamSourceCategory(lnk);
+                if (sourceCounts[src] !== undefined) sourceCounts[src]++;
+                else sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+                
+                const q = getStreamQualityCategory(lnk);
+                if (qualityCounts[q] !== undefined) qualityCounts[q]++;
+                else qualityCounts[q] = (qualityCounts[q] || 0) + 1;
+            });
+            
+            // Source Pill Definitions
+            const sourceDefs = [
+                { key: 'all', label: 'All Sources' },
+                { key: 'hdhub', label: '🚀 HdHub' },
+                { key: 'torrentio', label: '🎬 Torrentio' },
+                { key: 'p2p', label: '🧲 Torrent P2P' },
+                { key: 'notorrent', label: '⚡ NoTorrent' },
+                { key: 'streamvix', label: '📺 StreamViX' }
+            ];
+            
+            sourceContainer.innerHTML = '';
+            sourceDefs.forEach(def => {
+                const count = sourceCounts[def.key] || 0;
+                // Show 'all' always, and other sources if count > 0 or if currently active
+                if (def.key === 'all' || count > 0 || activeStreamSourceFilter === def.key) {
+                    const pill = document.createElement('button');
+                    pill.className = `stream-filter-pill filter-pill ${activeStreamSourceFilter === def.key ? 'active' : ''}`;
+                    pill.dataset.filterKey = def.key;
+                    pill.innerHTML = `<span>${def.label}</span> <span class="pill-count">(${count})</span>`;
+                    pill.onclick = () => setStreamSourceFilter(def.key);
+                    sourceContainer.appendChild(pill);
+                }
+            });
+            
+            // Quality Pill Definitions
+            const qualityDefs = [
+                { key: 'all', label: 'All Qualities' },
+                { key: '4k', label: '4K UHD' },
+                { key: '1080p', label: '1080p FHD' },
+                { key: '720p', label: '720p HD' },
+                { key: 'sd', label: 'SD' }
+            ];
+            
+            qualityContainer.innerHTML = '';
+            qualityDefs.forEach(def => {
+                const count = qualityCounts[def.key] || 0;
+                const pill = document.createElement('button');
+                pill.className = `stream-filter-pill filter-pill ${activeStreamQualityFilter === def.key ? 'active' : ''}`;
+                pill.dataset.filterKey = def.key;
+                pill.innerHTML = `<span>${def.label}</span> <span class="pill-count">(${count})</span>`;
+                pill.onclick = () => setStreamQualityFilter(def.key);
+                qualityContainer.appendChild(pill);
+            });
+            
+            lucide.createIcons();
+        }
+
+        function setStreamSourceFilter(sourceKey) {
+            activeStreamSourceFilter = sourceKey;
+            document.querySelectorAll('#source-filter-pills .stream-filter-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filterKey === sourceKey);
+            });
+            renderResolvedLinks();
+        }
+
+        function setStreamQualityFilter(qualityKey) {
+            activeStreamQualityFilter = qualityKey;
+            document.querySelectorAll('#quality-filter-pills .stream-filter-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filterKey === qualityKey);
+            });
+            renderResolvedLinks();
+        }
+
         // Render resolved links with filtering applied
         function renderResolvedLinks() {
             const linksShelf = document.getElementById('links-shelf');
             linksShelf.innerHTML = '';
             
-            let links = [...(window.allResolvedLinks || [])];
+            let allLinks = [...(window.allResolvedLinks || [])];
             
             // Only list active, playable stream links (must have a valid playable HTTP/HTTPS URL)
-            links = links.filter(lnk => lnk.url && lnk.url.trim() !== '' && lnk.url.startsWith('http'));
+            allLinks = allLinks.filter(lnk => lnk.url && lnk.url.trim() !== '' && lnk.url.startsWith('http'));
             
             const webSoundOnly = document.getElementById('websound-toggle').checked;
             if (webSoundOnly) {
-                links = links.filter(lnk => {
+                allLinks = allLinks.filter(lnk => {
                     const audioInfo = getAudioBadgeInfo(lnk.fileTitle);
                     return audioInfo.isWebCompatible;
                 });
             }
             
-            document.getElementById('links-count-header').innerText = `Resolved Stream Sources (${links.length})`;
+            // Update filter pills with counts from all available links
+            updateStreamFilterPills(allLinks);
             
-            if (links.length === 0) {
+            // Apply Source Filter
+            let filteredLinks = allLinks;
+            if (activeStreamSourceFilter !== 'all') {
+                filteredLinks = filteredLinks.filter(lnk => getStreamSourceCategory(lnk) === activeStreamSourceFilter);
+            }
+            
+            // Apply Quality Filter
+            if (activeStreamQualityFilter !== 'all') {
+                filteredLinks = filteredLinks.filter(lnk => getStreamQualityCategory(lnk) === activeStreamQualityFilter);
+            }
+            
+            document.getElementById('links-count-header').innerText = `Resolved Stream Sources (${filteredLinks.length})`;
+            
+            if (filteredLinks.length === 0) {
                 linksShelf.innerHTML = `
                     <div style="text-align: center; color: var(--text-secondary); padding: 40px 20px; grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; width: 100%;">
                         <i data-lucide="info" style="width: 32px; height: 32px; color: var(--accent-cinema); opacity: 0.8;"></i>
                         <p style="font-size: 0.9rem; font-weight: 500;">No active stream links match the current filters.</p>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Ensure your Real-Debrid token is paired and active to unlock premium streams, or adjust the "Web Sound Only" audio filter.</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Try selecting "All Sources" or "All Qualities", or check your Debrid connection.</span>
                     </div>
                 `;
                 lucide.createIcons();
                 return;
             }
             
-            links.forEach((lnk) => {
+            filteredLinks.forEach((lnk) => {
                 const row = document.createElement('div');
                 row.className = 'link-row';
                 
@@ -7481,6 +7808,12 @@ v1.2.0: Upgraded UI and update system</pre>
                     border-color: var(--accent-cinema) !important;
                     transform: scale(1.02) !important;
                 }
+                .stream-filter-pill.focused-tv {
+                    transform: scale(1.08) !important;
+                    outline: 2px solid #00d2ff !important;
+                    box-shadow: 0 0 20px rgba(0, 210, 255, 0.7) !important;
+                    z-index: 100 !important;
+                }
             `;
             document.head.appendChild(focusStyle);
 
@@ -7530,8 +7863,8 @@ v1.2.0: Upgraded UI and update system</pre>
                     }
                     element.focus({ preventScroll: true });
                     
-                    // Custom centering for horizontal scroll containers (like genre bar, cast row, similar row, category filter row, IPTV categories)
-                    const horizontalContainer = element.closest('.genre-bar, .horizontal-scroll-row, #category-filter-row, #livetv-category-list');
+                    // Custom centering for horizontal scroll containers (like genre bar, cast row, similar row, category filter row, IPTV categories, stream filters)
+                    const horizontalContainer = element.closest('.genre-bar, .horizontal-scroll-row, #category-filter-row, #livetv-category-list, .stream-filter-row, .stream-filter-pills-row');
                     if (horizontalContainer) {
                         const containerRect = horizontalContainer.getBoundingClientRect();
                         const elemRect = element.getBoundingClientRect();

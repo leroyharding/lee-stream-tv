@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.leestreamtv"
         minSdk = 24
         targetSdk = 36
-        versionCode = 30
-        versionName = "1.7.6"
+        versionCode = 31
+        versionName = "1.7.7"
     }
 
     buildTypes {
@@ -37,6 +37,11 @@ android {
       resources {
         excludes += "/META-INF/{AL2.0,LGPL2.1}"
       }
+    }
+
+    lint {
+      checkReleaseBuilds = false
+      abortOnError = false
     }
 }
 

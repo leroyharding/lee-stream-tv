@@ -18,29 +18,42 @@ This file contains a detailed record of the changes, achievements, and structura
 
 ---
 
+### Stream Filter System (v1.7.7)
+- **Source & Quality Filters**: Added a sleek, 2-tier glassmorphic filter bar (`SOURCE:` and `QUALITY:`) right above the resolved streams list.
+- **Dynamic Badges & Counts**: Each pill chip displays live item counts (e.g. `🚀 HdHub (57)`, `🎬 Torrentio (22)`, `4K UHD (2)`, `1080p FHD (64)`).
+- **Vibrant Gradient Active State**: Selected pills glow with the cyan-to-purple gradient (`linear-gradient(135deg, #00d2ff 0%, #7b2cbf 100%)`).
+- **TV D-pad Integration**: Arrow keys navigate seamlessly between filter pills, with custom focus rings and smooth centering.
+
+### Real-Debrid Sync Fix (v1.7.7)
+- **OAuth Polling Fix**: Resolved the HTTP 403 status handling during Real-Debrid device code authorization polling (`authorization_pending`), preventing premature "Polling failed" exceptions.
+- **Proxy Chain Optimization**: Removed deprecated/failing proxies (`corsproxy.io` and `thingproxy`) and streamlined fallback requests with fast timeouts.
+- **URL-Encoded Token Exchange**: Switched token exchange from `multipart/form-data` to `application/x-www-form-urlencoded` standard payload.
+
+---
+
 ## 2. Codebase Modifications (Committed & Pushed to GitHub)
 
 1. **[cinema_hd_web_portal.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/cinema_hd_web_portal.html)** & **[android_app/app/src/main/assets/index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/assets/index.html)**:
-   - Refactored `setFocus()` to use `behavior: 'auto'` and `block: 'nearest'` to avoid scroll lag and bounding rect distortions.
-   - Enhanced `navigate(direction)` to scope candidates to active container bounds and penalize section jumping on vertical arrow presses.
-2. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
-   - Incremented version configurations to `versionCode = 30` and `versionName = "1.7.6"`.
-3. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
-   - Updated to `versionCode: 30`, `versionName: "1.7.6"`.
-4. **[android_app/app/src/main/res/xml/file_paths.xml](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/res/xml/file_paths.xml)**:
-   - Corrected namespace URL typo from `schemas.github.com` to `schemas.android.com`.
+   - Added 2-tier Source and Quality stream filters bar with live badge counts and gradient glow.
+   - Refactored Real-Debrid sync with instant manual API key saving and native bridge integration.
+2. **[android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt)**:
+   - Added `httpRequest` Javascript interface to route network calls natively through Android HttpURLConnection.
+3. **[android_app/app/build.gradle.kts](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/build.gradle.kts)**:
+   - Incremented version configurations to `versionCode = 31` and `versionName = "1.7.7"`.
+4. **[update.json](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/update.json)**:
+   - Updated to `versionCode: 31`, `versionName: "1.7.7"`, and updated changelog.
 
 ---
 
 ## 3. Compiled APK Releases in the Workspace Root
 The following APKs were built and exist in the root workspace folder:
-- **`LeeStreamTV.apk`**: The latest stable v1.7.6 production build.
-- **`LeeStreamTV_v1.7.6.apk`**: Versioned copy of the v1.7.6 build.
+- **`LeeStreamTV.apk`**: The latest stable v1.7.7 production build.
+- **`LeeStreamTV_v1.7.7.apk`**: Versioned copy of the v1.7.7 build.
 
 ---
 
 ## 4. Current Status & Next Steps
-- **GitHub Code Repository**: All source modifications are committed and pushed to the `main` branch of `https://github.com/leroyharding/lee-stream-tv.git`.
-- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.7.6`.
-- **Next Step**: Firestick users opening **LeeStreamTV** will automatically receive the `v1.7.6` update notice with smooth, jump-free D-pad list navigation.
+- **GitHub Code Repository**: All source modifications committed and pushed to the `main` branch of `https://github.com/leroyharding/lee-stream-tv.git`.
+- **Update Server**: The raw file `update.json` on GitHub is live and set to version `1.7.7`.
+- **Next Step**: Firestick users opening **LeeStreamTV** will automatically receive the `v1.7.7` update notice.
 

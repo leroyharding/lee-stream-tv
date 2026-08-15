@@ -248,6 +248,44 @@ class WebAppInterface(private val mContext: Context) {
         }
     }
 
+    @JavascriptInterface
+    fun httpRequest(method: String, urlString: String, body: String?, contentType: String?): String {
+        return try {
+            val url = java.net.URL(urlString)
+            val conn = url.openConnection() as java.net.HttpURLConnection
+            conn.requestMethod = method.uppercase()
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+            conn.setRequestProperty("User-Agent", "LeeStreamTV/1.7.7")
+            
+            if (!contentType.isNullOrEmpty()) {
+                conn.setRequestProperty("Content-Type", contentType)
+            }
+            
+            if (method.equals("POST", ignoreCase = true) && body != null) {
+                conn.doOutput = true
+                val os = conn.outputStream
+                os.write(body.toByteArray(Charsets.UTF_8))
+                os.flush()
+                os.close()
+            }
+            
+            val responseCode = conn.responseCode
+            val stream = if (responseCode in 200..299) conn.inputStream else (conn.errorStream ?: conn.inputStream)
+            val responseText = stream?.bufferedReader()?.use { it.readText() } ?: ""
+            
+            org.json.JSONObject().apply {
+                put("status", responseCode)
+                put("data", responseText)
+            }.toString()
+        } catch (e: Exception) {
+            org.json.JSONObject().apply {
+                put("status", 0)
+                put("error", e.message ?: "Network error")
+            }.toString()
+        }
+    }
+
     private fun sanitizeUrl(url: String): String {
         return url
             .replace(" ", "%20")
