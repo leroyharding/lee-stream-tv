@@ -3727,7 +3727,7 @@ v1.2.0: Upgraded UI and update system</pre>
             }
         }
 
-        const CURRENT_VERSION_CODE = 30; // Increment this with every release
+        const CURRENT_VERSION_CODE = 31; // v1.7.7
 
         async function checkAppUpdates() {
             try {
@@ -3739,7 +3739,15 @@ v1.2.0: Upgraded UI and update system</pre>
                 // Store the latest APK url globally for download buttons
                 window.latestApkUrl = updateInfo.apkUrl;
 
-                if (updateInfo.versionCode > CURRENT_VERSION_CODE) {
+                // Dynamically read installed version code from Android Native Bridge if running inside APK
+                let installedVersionCode = CURRENT_VERSION_CODE;
+                if (window.LeeStreamTVBridge && typeof window.LeeStreamTVBridge.getAppVersionCode === 'function') {
+                    try {
+                        installedVersionCode = window.LeeStreamTVBridge.getAppVersionCode();
+                    } catch (e) {}
+                }
+
+                if (updateInfo.versionCode > installedVersionCode) {
                     const infoChangelog = document.getElementById('info-page-changelog');
                     if (infoChangelog && updateInfo.changelog) {
                         infoChangelog.innerText = updateInfo.changelog;

@@ -20,6 +20,31 @@ class WebAppInterface(private val mContext: Context) {
     }
 
     @JavascriptInterface
+    fun getAppVersionCode(): Int {
+        return try {
+            val pInfo = mContext.packageManager.getPackageInfo(mContext.packageName, 0)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                pInfo.longVersionCode.toInt()
+            } else {
+                @Suppress("DEPRECATION")
+                pInfo.versionCode
+            }
+        } catch (e: Exception) {
+            31
+        }
+    }
+
+    @JavascriptInterface
+    fun getAppVersionName(): String {
+        return try {
+            val pInfo = mContext.packageManager.getPackageInfo(mContext.packageName, 0)
+            pInfo.versionName ?: "1.7.7"
+        } catch (e: Exception) {
+            "1.7.7"
+        }
+    }
+
+    @JavascriptInterface
     fun playInMXPlayer(url: String, title: String) {
         playInMXPlayer(url, title, 0)
     }
