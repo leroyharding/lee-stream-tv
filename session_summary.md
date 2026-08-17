@@ -33,7 +33,8 @@ This file contains a detailed record of the changes, achievements, and structura
 
 ## 2. Codebase Modifications (Committed & Pushed to GitHub)
 
-1. **[cinema_hd_web_portal.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/cinema_hd_web_portal.html)** & **[android_app/app/src/main/assets/index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/assets/index.html)**:
+1. **[index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/index.html)** (formerly `cinema_hd_web_portal.html`) & **[android_app/app/src/main/assets/index.html](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/assets/index.html)**:
+   - Renamed master web portal to `index.html` in workspace root for instant Vercel zero-config deployment.
    - Added 2-tier Source and Quality stream filters bar with live badge counts and gradient glow.
    - Refactored Real-Debrid sync with instant manual API key saving and native bridge integration.
 2. **[android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt](file:///c:/Users/leroy/Desktop/my%20apps/streamTV/android_app/app/src/main/java/com/example/leestreamtv/WebAppInterface.kt)**:
